@@ -74,7 +74,6 @@ repository.
 ├── RFC.md
 ├── openapi.yaml                   # API contract (source of truth for endpoints)
 ├── docker-compose.yaml
-├── .env.example
 ├── README.md
 ├── backend/
 │   ├── cmd/server/main.go         # wiring, graceful shutdown
@@ -94,6 +93,7 @@ repository.
 │   │   └── sweeper/sweeper.go     # time.Ticker expiry loop
 │   ├── migrations/0001_init.sql
 │   ├── Dockerfile                 # multi-stage build
+│   ├── .env.example               # environment template
 │   └── go.mod
 ├── frontend/
 │   ├── src/
@@ -346,8 +346,9 @@ Local component state only (no state library). Scaffold with `npm create vite@la
   service_healthy}`.
 - **frontend** — optional; built from `frontend/Dockerfile`; API base URL via build arg / env.
 
-`.env.example`: `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`, `DATABASE_URL`, `PORT`,
+`backend/.env.example`: `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`, `DATABASE_URL`, `PORT`,
 `RESERVATION_TTL=5m`, `SWEEP_INTERVAL=30s`. Defaults must let `docker compose up` work with no edits.
+Compose loads `.env` from the repo root, so copy this template there to override the defaults.
 
 ---
 
@@ -414,7 +415,7 @@ read-modify-write race that over-sells under concurrency. Fixed by moving the gu
 
 ## 16. Implementation Order (for the agent)
 
-1. Scaffold repo, `docker-compose.yaml`, `.env.example`, `backend/go.mod`, migration SQL.
+1. Scaffold repo, `docker-compose.yaml`, `backend/.env.example`, `backend/go.mod`, migration SQL.
 2. Domain models + sentinel errors; repository (SQL) with generated IDs.
 3. Service: reserve/confirm/getStock transactions (§7) with unit tests.
 4. Gin router + handlers + error-mapping middleware (§6).
