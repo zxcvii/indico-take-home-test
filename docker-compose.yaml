@@ -1,0 +1,35 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-indico}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-indico}
+      POSTGRES_DB: ${POSTGRES_DB:-indico}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./backend/migrations:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-indico} -d ${POSTGRES_DB:-indico}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+    environment:
+      PORT: "8080"
+      DATABASE_URL: "postgres://${POSTGRES_USER:-indico}:${POSTGRES_PASSWORD:-indico}@postgres:5432/${POSTGRES_DB:-indico}?sslmode=disable"
+      RESERVATION_TTL: "5m"
+      SWEEP_INTERVAL: "30s"
+      DB_MAX_CONNS: "10"
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  pgdata:
