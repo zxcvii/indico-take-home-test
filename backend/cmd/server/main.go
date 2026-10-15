@@ -14,6 +14,8 @@ import (
 	"github.com/zxcvii/indico-take-home-test/backend/internal/config"
 	"github.com/zxcvii/indico-take-home-test/backend/internal/httpapi"
 	"github.com/zxcvii/indico-take-home-test/backend/internal/repository"
+	"github.com/zxcvii/indico-take-home-test/backend/internal/service"
+	"github.com/zxcvii/indico-take-home-test/backend/internal/sweeper"
 )
 
 const shutdownTimeout = 10 * time.Second
@@ -29,19 +31,42 @@ func main() {
 }
 
 func run(logger *slog.Logger) error {
-	cfg := config.Load()
+	cfg, err := config.Load()
+	if err != nil {
+		return err
+	}
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
 
-	pool, err := repository.NewPool(ctx, cfg.DatabaseURL)
+	pool, err := repository.NewPool(ctx, cfg.DatabaseURL, cfg.DBMaxConns)
 	if err != nil {
 		return err
 	}
 	store := repository.NewStore(pool)
 	defer store.Close()
 
-	router := httpapi.New(httpapi.Deps{Health: store})
+	inventory := service.New(store, cfg.ReservationTTL)
+
+	sweepCtx, stopSweeper := context.WithCancel(context.Background())
+	defer stopSweeper()
+	expiry := sweeper.New(cfg.SweepInterval, func(sweepCtx context.Context) error {
+		expired, err := inventory.ExpireDue(sweepCtx)
+		if err != nil {
+			return err
+		}
+		if expired > 0 {
+			logger.Info("expired reservations released", "count", expired)
+		}
+		return nil
+	}, logger)
+	go expiry.Run(sweepCtx)
+
+	router := httpapi.New(httpapi.Deps{
+		Logger:    logger,
+		Inventory: inventory,
+		Health:    store,
+	})
 
 	srv := &http.Server{
 		Addr:              ":" + cfg.Port,
@@ -66,6 +91,8 @@ func run(logger *slog.Logger) error {
 
 	stop()
 
+	// Drain in-flight requests first; the deferred sweeper stop and pool close
+	// then run in the intended order (stop sweeper, close pool) on return.
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), shutdownTimeout)
 	defer cancel()
 	if err := srv.Shutdown(shutdownCtx); err != nil {

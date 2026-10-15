@@ -1,11 +1,15 @@
-// Package httpapi is the HTTP layer.
+// Package httpapi is the HTTP layer: router, middleware, handlers and error
+// mapping. It is the only package aware of gin.
 package httpapi
 
 import (
 	"context"
+	"log/slog"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+
+	"github.com/zxcvii/indico-take-home-test/backend/internal/service"
 )
 
 // HealthChecker reports whether a dependency (the database) is reachable.
@@ -15,14 +19,33 @@ type HealthChecker interface {
 
 // Deps are the collaborators the HTTP layer needs.
 type Deps struct {
-	Health HealthChecker
+	Logger    *slog.Logger
+	Inventory *service.Inventory
+	Health    HealthChecker
 }
 
-// New builds the gin engine. Only the health endpoint is registered for now.
+// New builds the gin engine with middleware and all routes registered.
 func New(deps Deps) *gin.Engine {
+	logger := deps.Logger
+	if logger == nil {
+		logger = slog.Default()
+	}
+
 	gin.SetMode(gin.ReleaseMode)
 	r := gin.New()
+
+	r.Use(requestIDMiddleware())
+	r.Use(recoveryMiddleware(logger))
+	r.Use(loggingMiddleware(logger))
+
 	r.GET("/health", healthHandler(deps.Health))
+
+	h := &handler{inventory: deps.Inventory}
+	api := r.Group("/api/v1/inventory")
+	api.POST("/reserve", h.reserve)
+	api.POST("/confirm", h.confirm)
+	api.GET("/stock", h.stock)
+
 	return r
 }
 
