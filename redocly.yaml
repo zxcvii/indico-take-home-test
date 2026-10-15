@@ -1,0 +1,7 @@
+extends:
+  - recommended
+
+rules:
+  # The service runs locally via `docker compose up`, so localhost is the
+  # intended server URL, not a placeholder.
+  no-server-example.com: off

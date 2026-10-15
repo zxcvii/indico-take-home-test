@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf8" />
+  <title>Inventory Reservation API</title>
+  <!-- needed for adaptive design -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      padding: 0;
+      margin: 0;
+    }
+  </style>
+  <script src="https://cdn.redocly.com/redoc/v2.5.4/bundles/redoc.standalone.js" integrity="sha384-w447zOpYfw/1Tv/5AK9NfHTlQIqE3RVR6KY62jCyy9zNDgO64cMwGGP1Fj0zJVf5" crossorigin="anonymous"></script><style data-styled="true" data-styled-version="6.4.2">.kktglN{width:calc(100% - 40%);padding:0 40px;}/*!sc*/
+@media print,screen and (max-width: 75rem){.kktglN{width:100%;padding:40px 40px;}}/*!sc*/
+.kmAAAV{width:calc(100% - 40%);padding:0 40px;}/*!sc*/
+@media print,screen and (max-width: 75rem){.kmAAAV{width:100%;padding:0px 40px;}}/*!sc*/
+data-styled.g5[id="sc-hKVpXn"]{content:"kktglN,kmAAAV,"}/*!sc*/
+.jleRXN{padding:40px 0;}/*!sc*/
+.jleRXN:last-child{min-height:calc(100vh + 1px);}/*!sc*/
+.jleRXN>.jleRXN:last-child{min-height:initial;}/*!sc*/
+@media print,screen and (max-width: 75rem){.jleRXN{padding:0;}}/*!sc*/
+.grDwca{padding:40px 0;position:relative;}/*!sc*/
+.grDwca:last-child{min-height:calc(100vh + 1px);}/*!sc*/
+.grDwca>.grDwca:last-child{min-height:initial;}/*!sc*/
+@media print,screen and (max-width: 75rem){.grDwca{padding:0;}}/*!sc*/
+.grDwca:not(:last-of-type):after{position:absolute;bottom:0;width:100%;display:block;content:'';border-bottom:1px solid rgba(0, 0, 0, 0.2);}/*!sc*/
+data-styled.g6[id="sc-eCQgVK"]{content:"jleRXN,grDwca,"}/*!sc*/
+.fpMlmc{width:40%;color:#ffffff;background-color:#263238;padding:0 40px;}/*!sc*/
+@media print,screen and (max-width: 75rem){.fpMlmc{width:100%;padding:40px 40px;}}/*!sc*/
+data-styled.g7[id="sc-jSppWd"]{content:"fpMlmc,"}/*!sc*/
+.bdQQyo{background-color:#263238;}/*!sc*/
+data-styled.g8[id="sc-gKkgUA"]{content:"bdQQyo,"}/*!sc*/
+.lhRBUS{display:flex;width:100%;padding:0;}/*!sc*/
+@media print,screen and (max-width: 75rem){.lhRBUS{flex-direction:column;}}/*!sc*/
+data-styled.g9[id="sc-iCECmn"]{content:"lhRBUS,"}/*!sc*/
+.eRMVDe{font-family:Montserrat,sans-serif;font-weight:400;font-size:1.85714em;line-height:1.6em;color:#333333;}/*!sc*/
+data-styled.g10[id="sc-fuztkK"]{content:"eRMVDe,"}/*!sc*/
+.MOVBZ{font-family:Montserrat,sans-serif;font-weight:400;font-size:1.57143em;line-height:1.6em;color:#333333;margin:0 0 20px;}/*!sc*/
+data-styled.g11[id="sc-qdQOe"]{content:"MOVBZ,"}/*!sc*/
+.iSbGeC{font-family:Montserrat,sans-serif;font-weight:400;font-size:1.27em;line-height:1.6em;color:#333333;}/*!sc*/
+data-styled.g12[id="sc-jrIDTr"]{content:"iSbGeC,"}/*!sc*/
+.iamDfj{color:#ffffff;}/*!sc*/
+data-styled.g13[id="sc-kEbgWM"]{content:"iamDfj,"}/*!sc*/
+.jprlAr{border-bottom:1px solid rgba(38, 50, 56, 0.3);margin:1em 0 1em 0;color:rgba(38, 50, 56, 0.7);font-weight:normal;text-transform:uppercase;font-size:0.929em;line-height:20px;}/*!sc*/
+data-styled.g14[id="sc-iqkkDd"]{content:"jprlAr,"}/*!sc*/
+.jmoZom{cursor:pointer;margin-left:-20px;padding:0;line-height:1;width:20px;display:inline-block;outline:0;}/*!sc*/
+.jmoZom:before{content:'';width:15px;height:15px;background-size:contain;background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgeD0iMCIgeT0iMCIgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA1MTIgNTEyIiB4bWw6c3BhY2U9InByZXNlcnZlIj48cGF0aCBmaWxsPSIjMDEwMTAxIiBkPSJNNDU5LjcgMjMzLjRsLTkwLjUgOTAuNWMtNTAgNTAtMTMxIDUwLTE4MSAwIC03LjktNy44LTE0LTE2LjctMTkuNC0yNS44bDQyLjEtNDIuMWMyLTIgNC41LTMuMiA2LjgtNC41IDIuOSA5LjkgOCAxOS4zIDE1LjggMjcuMiAyNSAyNSA2NS42IDI0LjkgOTAuNSAwbDkwLjUtOTAuNWMyNS0yNSAyNS02NS42IDAtOTAuNSAtMjQuOS0yNS02NS41LTI1LTkwLjUgMGwtMzIuMiAzMi4yYy0yNi4xLTEwLjItNTQuMi0xMi45LTgxLjYtOC45bDY4LjYtNjguNmM1MC01MCAxMzEtNTAgMTgxIDBDNTA5LjYgMTAyLjMgNTA5LjYgMTgzLjQgNDU5LjcgMjMzLjR6TTIyMC4zIDM4Mi4ybC0zMi4yIDMyLjJjLTI1IDI0LjktNjUuNiAyNC45LTkwLjUgMCAtMjUtMjUtMjUtNjUuNiAwLTkwLjVsOTAuNS05MC41YzI1LTI1IDY1LjUtMjUgOTAuNSAwIDcuOCA3LjggMTIuOSAxNy4yIDE1LjggMjcuMSAyLjQtMS40IDQuOC0yLjUgNi44LTQuNWw0Mi4xLTQyYy01LjQtOS4yLTExLjYtMTgtMTkuNC0yNS44IC01MC01MC0xMzEtNTAtMTgxIDBsLTkwLjUgOTAuNWMtNTAgNTAtNTAgMTMxIDAgMTgxIDUwIDUwIDEzMSA1MCAxODEgMGw2OC42LTY4LjZDMjc0LjYgMzk1LjEgMjQ2LjQgMzkyLjMgMjIwLjMgMzgyLjJ6Ii8+PC9zdmc+Cg==');opacity:0.5;visibility:hidden;display:inline-block;vertical-align:middle;}/*!sc*/
+h1:hover>.jmoZom::before,h2:hover>.jmoZom::before,.jmoZom:hover::before{visibility:visible;}/*!sc*/
+data-styled.g15[id="sc-crPgjm"]{content:"jmoZom,"}/*!sc*/
+.kdgFPv{height:18px;width:18px;min-width:18px;vertical-align:middle;float:right;transition:transform 0.2s ease-out;transform:rotateZ(-90deg);}/*!sc*/
+.gngmNp{height:1.5em;width:1.5em;min-width:1.5em;vertical-align:middle;float:left;transition:transform 0.2s ease-out;transform:rotateZ(-90deg);}/*!sc*/
+.gngmNp polygon{fill:#1d8127;}/*!sc*/
+.hJoFRR{height:1.5em;width:1.5em;min-width:1.5em;vertical-align:middle;float:left;transition:transform 0.2s ease-out;transform:rotateZ(-90deg);}/*!sc*/
+.hJoFRR polygon{fill:#d41f1c;}/*!sc*/
+.bQKUih{height:20px;width:20px;min-width:20px;vertical-align:middle;float:right;transition:transform 0.2s ease-out;transform:rotateZ(0);}/*!sc*/
+.bQKUih polygon{fill:white;}/*!sc*/
+data-styled.g16[id="sc-dYjPD"]{content:"kdgFPv,gngmNp,hJoFRR,bQKUih,"}/*!sc*/
+.jFNAwF{border-left:1px solid #7c7cbb;box-sizing:border-box;position:relative;padding:10px 10px 10px 0;}/*!sc*/
+@media screen and (max-width: 50rem){.jFNAwF{display:block;overflow:hidden;}}/*!sc*/
+tr:first-of-type>.jFNAwF,tr.last>.jFNAwF{border-left-width:0;background-position:top left;background-repeat:no-repeat;background-size:1px 100%;}/*!sc*/
+tr:first-of-type>.jFNAwF{background-image:linear-gradient(
+      to bottom,
+      transparent 0%,
+      transparent 22px,
+      #7c7cbb 22px,
+      #7c7cbb 100%
+    );}/*!sc*/
+tr.last>.jFNAwF{background-image:linear-gradient(
+      to bottom,
+      #7c7cbb 0%,
+      #7c7cbb 22px,
+      transparent 22px,
+      transparent 100%
+    );}/*!sc*/
+tr.last+tr>.jFNAwF{border-left-color:transparent;}/*!sc*/
+tr.last:first-child>.jFNAwF{background:none;border-left-color:transparent;}/*!sc*/
+data-styled.g19[id="sc-hCcPtG"]{content:"jFNAwF,"}/*!sc*/
+.lcdEEX{vertical-align:top;line-height:20px;white-space:nowrap;font-size:13px;font-family:Courier,monospace;}/*!sc*/
+.lcdEEX.deprecated{text-decoration:line-through;color:#707070;}/*!sc*/
+data-styled.g21[id="sc-fFCZOx"]{content:"lcdEEX,"}/*!sc*/
+.gLpZiQ{border-bottom:1px solid #9fb4be;padding:10px 0;width:75%;box-sizing:border-box;}/*!sc*/
+tr.expanded .gLpZiQ{border-bottom:none;}/*!sc*/
+@media screen and (max-width: 50rem){.gLpZiQ{padding:0 20px;border-bottom:none;border-left:1px solid #7c7cbb;}tr.last>.gLpZiQ{border-left:none;}}/*!sc*/
+data-styled.g22[id="sc-bjLslk"]{content:"gLpZiQ,"}/*!sc*/
+.kkMuqc{color:#7c7cbb;font-family:Courier,monospace;margin-right:10px;}/*!sc*/
+.kkMuqc::before{content:'';display:inline-block;vertical-align:middle;width:10px;height:1px;background:#7c7cbb;}/*!sc*/
+.kkMuqc::after{content:'';display:inline-block;vertical-align:middle;width:1px;background:#7c7cbb;height:7px;}/*!sc*/
+data-styled.g23[id="sc-ieCSdj"]{content:"kkMuqc,"}/*!sc*/
+.bsjUmE{border-collapse:separate;border-radius:3px;font-size:14px;border-spacing:0;width:100%;}/*!sc*/
+.bsjUmE >tr{vertical-align:middle;}/*!sc*/
+@media screen and (max-width: 50rem){.bsjUmE{display:block;}.bsjUmE >tr,.bsjUmE >tbody>tr{display:block;}}/*!sc*/
+@media screen and (max-width: 50rem) and (-ms-high-contrast:none){.bsjUmE td{float:left;width:100%;}}/*!sc*/
+.bsjUmE .sc-dILkzW,.bsjUmE .sc-dILkzW .sc-dILkzW .sc-dILkzW,.bsjUmE .sc-dILkzW .sc-dILkzW .sc-dILkzW .sc-dILkzW .sc-dILkzW{margin:1em;margin-right:0;background:#fafafa;}/*!sc*/
+.bsjUmE .sc-dILkzW .sc-dILkzW,.bsjUmE .sc-dILkzW .sc-dILkzW .sc-dILkzW .sc-dILkzW,.bsjUmE .sc-dILkzW .sc-dILkzW .sc-dILkzW .sc-dILkzW .sc-dILkzW .sc-dILkzW{background:#ffffff;}/*!sc*/
+data-styled.g25[id="sc-hHopjF"]{content:"bsjUmE,"}/*!sc*/
+.fcGuQW >ul{list-style:none;padding:0;margin:0;margin:0 -5px;}/*!sc*/
+.fcGuQW >ul >li{padding:5px 10px;display:inline-block;background-color:#11171a;border-bottom:1px solid rgba(0, 0, 0, 0.5);cursor:pointer;text-align:center;outline:none;color:#ccc;margin:0 5px 5px 5px;border:1px solid #07090b;border-radius:5px;min-width:60px;font-size:0.9em;font-weight:bold;}/*!sc*/
+.fcGuQW >ul >li.react-tabs__tab--selected{color:#333333;background:#ffffff;}/*!sc*/
+.fcGuQW >ul >li.react-tabs__tab--selected:focus{outline:auto;}/*!sc*/
+.fcGuQW >ul >li:only-child{flex:none;min-width:100px;}/*!sc*/
+.fcGuQW >ul >li.tab-success{color:#33d143;}/*!sc*/
+.fcGuQW >ul >li.tab-success.react-tabs__tab--selected{color:#1d8127;}/*!sc*/
+.fcGuQW >ul >li.tab-redirect{color:#ffa500;}/*!sc*/
+.fcGuQW >ul >li.tab-redirect.react-tabs__tab--selected{color:#996300;}/*!sc*/
+.fcGuQW >ul >li.tab-info{color:#30aadc;}/*!sc*/
+.fcGuQW >ul >li.tab-info.react-tabs__tab--selected{color:#186c8e;}/*!sc*/
+.fcGuQW >ul >li.tab-error{color:#eb6d6b;}/*!sc*/
+.fcGuQW >ul >li.tab-error.react-tabs__tab--selected{color:#d41f1c;}/*!sc*/
+.fcGuQW >.react-tabs__tab-panel{background:#11171a;}/*!sc*/
+.fcGuQW >.react-tabs__tab-panel>div,.fcGuQW >.react-tabs__tab-panel>pre{padding:20px;margin:0;}/*!sc*/
+.fcGuQW >.react-tabs__tab-panel>div>pre{padding:0;}/*!sc*/
+data-styled.g31[id="sc-cxxQMU"]{content:"fcGuQW,"}/*!sc*/
+.fiNpIH code[class*='language-'],.fiNpIH pre[class*='language-']{text-shadow:0 -0.1em 0.2em black;text-align:left;white-space:pre;word-spacing:normal;word-break:normal;word-wrap:normal;line-height:1.5;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-hyphens:none;-moz-hyphens:none;-ms-hyphens:none;hyphens:none;}/*!sc*/
+@media print{.fiNpIH code[class*='language-'],.fiNpIH pre[class*='language-']{text-shadow:none;}}/*!sc*/
+.fiNpIH pre[class*='language-']{padding:1em;margin:0.5em 0;overflow:auto;}/*!sc*/
+.fiNpIH .token.comment,.fiNpIH .token.prolog,.fiNpIH .token.doctype,.fiNpIH .token.cdata{color:hsl(30, 20%, 50%);}/*!sc*/
+.fiNpIH .token.punctuation{opacity:0.7;}/*!sc*/
+.fiNpIH .namespace{opacity:0.7;}/*!sc*/
+.fiNpIH .token.property,.fiNpIH .token.tag,.fiNpIH .token.number,.fiNpIH .token.constant,.fiNpIH .token.symbol{color:#4a8bb3;}/*!sc*/
+.fiNpIH .token.boolean{color:#e64441;}/*!sc*/
+.fiNpIH .token.selector,.fiNpIH .token.attr-name,.fiNpIH .token.string,.fiNpIH .token.char,.fiNpIH .token.builtin,.fiNpIH .token.inserted{color:#a0fbaa;}/*!sc*/
+.fiNpIH .token.selector+a,.fiNpIH .token.attr-name+a,.fiNpIH .token.string+a,.fiNpIH .token.char+a,.fiNpIH .token.builtin+a,.fiNpIH .token.inserted+a,.fiNpIH .token.selector+a:visited,.fiNpIH .token.attr-name+a:visited,.fiNpIH .token.string+a:visited,.fiNpIH .token.char+a:visited,.fiNpIH .token.builtin+a:visited,.fiNpIH .token.inserted+a:visited{color:#4ed2ba;text-decoration:underline;}/*!sc*/
+.fiNpIH .token.property.string{color:white;}/*!sc*/
+.fiNpIH .token.operator,.fiNpIH .token.entity,.fiNpIH .token.url,.fiNpIH .token.variable{color:hsl(40, 90%, 60%);}/*!sc*/
+.fiNpIH .token.atrule,.fiNpIH .token.attr-value,.fiNpIH .token.keyword{color:hsl(350, 40%, 70%);}/*!sc*/
+.fiNpIH .token.regex,.fiNpIH .token.important{color:#e90;}/*!sc*/
+.fiNpIH .token.important,.fiNpIH .token.bold{font-weight:bold;}/*!sc*/
+.fiNpIH .token.italic{font-style:italic;}/*!sc*/
+.fiNpIH .token.entity{cursor:help;}/*!sc*/
+.fiNpIH .token.deleted{color:red;}/*!sc*/
+data-styled.g33[id="sc-iJSMbW"]{content:"fiNpIH,"}/*!sc*/
+.dzKJV{opacity:0.7;transition:opacity 0.3s ease;text-align:right;}/*!sc*/
+.dzKJV:focus-within{opacity:1;}/*!sc*/
+.dzKJV >button{background-color:transparent;border:0;color:inherit;padding:2px 10px;font-family:Roboto,sans-serif;font-size:14px;line-height:1.5em;cursor:pointer;outline:0;}/*!sc*/
+.dzKJV >button :hover,.dzKJV >button :focus{background:rgba(255, 255, 255, 0.1);}/*!sc*/
+data-styled.g34[id="sc-giQkEn"]{content:"dzKJV,"}/*!sc*/
+.iOXjCz{position:relative;}/*!sc*/
+data-styled.g38[id="sc-kLEbxe"]{content:"iOXjCz,"}/*!sc*/
+.kxMqOs{margin-left:10px;text-transform:none;font-size:0.929em;color:black;}/*!sc*/
+data-styled.g42[id="sc-gXvOjn"]{content:"kxMqOs,"}/*!sc*/
+.htbHfQ{font-family:Roboto,sans-serif;font-weight:400;line-height:1.5em;}/*!sc*/
+.htbHfQ p:last-child{margin-bottom:0;}/*!sc*/
+.htbHfQ h1{font-family:Montserrat,sans-serif;font-weight:400;font-size:1.85714em;line-height:1.6em;color:#32329f;margin-top:0;}/*!sc*/
+.htbHfQ h2{font-family:Montserrat,sans-serif;font-weight:400;font-size:1.57143em;line-height:1.6em;color:#333333;}/*!sc*/
+.htbHfQ code{color:#c62828;background-color:rgba(38, 50, 56, 0.05);font-family:Courier,monospace;border-radius:2px;border:1px solid rgba(38, 50, 56, 0.1);padding:0 5px;font-size:13px;font-weight:400;word-break:break-word;}/*!sc*/
+.htbHfQ pre{font-family:Courier,monospace;white-space:pre;background-color:#11171a;color:white;padding:20px;overflow-x:auto;line-height:normal;border-radius:0;border:1px solid rgba(38, 50, 56, 0.1);}/*!sc*/
+.htbHfQ pre code{background-color:transparent;color:white;padding:0;}/*!sc*/
+.htbHfQ pre code:before,.htbHfQ pre code:after{content:none;}/*!sc*/
+.htbHfQ blockquote{margin:0;margin-bottom:1em;padding:0 15px;color:#777;border-left:4px solid #ddd;}/*!sc*/
+.htbHfQ img{max-width:100%;box-sizing:content-box;}/*!sc*/
+.htbHfQ ul,.htbHfQ ol{padding-left:2em;margin:0;margin-bottom:1em;}/*!sc*/
+.htbHfQ ul ul,.htbHfQ ol ul,.htbHfQ ul ol,.htbHfQ ol ol{margin-bottom:0;margin-top:0;}/*!sc*/
+.htbHfQ table{display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all;border-collapse:collapse;border-spacing:0;margin-top:1.5em;margin-bottom:1.5em;}/*!sc*/
+.htbHfQ table tr{background-color:#fff;border-top:1px solid #ccc;}/*!sc*/
+.htbHfQ table tr:nth-child(2n){background-color:#fafafa;}/*!sc*/
+.htbHfQ table th,.htbHfQ table td{padding:6px 13px;border:1px solid #ddd;}/*!sc*/
+.htbHfQ table th{text-align:left;font-weight:bold;}/*!sc*/
+.htbHfQ .share-link{cursor:pointer;margin-left:-20px;padding:0;line-height:1;width:20px;display:inline-block;outline:0;}/*!sc*/
+.htbHfQ .share-link:before{content:'';width:15px;height:15px;background-size:contain;background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgeD0iMCIgeT0iMCIgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA1MTIgNTEyIiB4bWw6c3BhY2U9InByZXNlcnZlIj48cGF0aCBmaWxsPSIjMDEwMTAxIiBkPSJNNDU5LjcgMjMzLjRsLTkwLjUgOTAuNWMtNTAgNTAtMTMxIDUwLTE4MSAwIC03LjktNy44LTE0LTE2LjctMTkuNC0yNS44bDQyLjEtNDIuMWMyLTIgNC41LTMuMiA2LjgtNC41IDIuOSA5LjkgOCAxOS4zIDE1LjggMjcuMiAyNSAyNSA2NS42IDI0LjkgOTAuNSAwbDkwLjUtOTAuNWMyNS0yNSAyNS02NS42IDAtOTAuNSAtMjQuOS0yNS02NS41LTI1LTkwLjUgMGwtMzIuMiAzMi4yYy0yNi4xLTEwLjItNTQuMi0xMi45LTgxLjYtOC45bDY4LjYtNjguNmM1MC01MCAxMzEtNTAgMTgxIDBDNTA5LjYgMTAyLjMgNTA5LjYgMTgzLjQgNDU5LjcgMjMzLjR6TTIyMC4zIDM4Mi4ybC0zMi4yIDMyLjJjLTI1IDI0LjktNjUuNiAyNC45LTkwLjUgMCAtMjUtMjUtMjUtNjUuNiAwLTkwLjVsOTAuNS05MC41YzI1LTI1IDY1LjUtMjUgOTAuNSAwIDcuOCA3LjggMTIuOSAxNy4yIDE1LjggMjcuMSAyLjQtMS40IDQuOC0yLjUgNi44LTQuNWw0Mi4xLTQyYy01LjQtOS4yLTExLjYtMTgtMTkuNC0yNS44IC01MC01MC0xMzEtNTAtMTgxIDBsLTkwLjUgOTAuNWMtNTAgNTAtNTAgMTMxIDAgMTgxIDUwIDUwIDEzMSA1MCAxODEgMGw2OC42LTY4LjZDMjc0LjYgMzk1LjEgMjQ2LjQgMzkyLjMgMjIwLjMgMzgyLjJ6Ii8+PC9zdmc+Cg==');opacity:0.5;visibility:hidden;display:inline-block;vertical-align:middle;}/*!sc*/
+.htbHfQ h1:hover>.share-link::before,.htbHfQ h2:hover>.share-link::before,.htbHfQ .share-link:hover::before{visibility:visible;}/*!sc*/
+.htbHfQ a{text-decoration:underline;color:#32329f;}/*!sc*/
+.htbHfQ a:visited{color:#32329f;}/*!sc*/
+.htbHfQ a:hover{color:#6868cf;text-decoration:underline;}/*!sc*/
+.bWgCZK{font-family:Roboto,sans-serif;font-weight:400;line-height:1.5em;}/*!sc*/
+.bWgCZK p:last-child{margin-bottom:0;}/*!sc*/
+.bWgCZK p:first-child{margin-top:0;}/*!sc*/
+.bWgCZK p:last-child{margin-bottom:0;}/*!sc*/
+.bWgCZK h1{font-family:Montserrat,sans-serif;font-weight:400;font-size:1.85714em;line-height:1.6em;color:#32329f;margin-top:0;}/*!sc*/
+.bWgCZK h2{font-family:Montserrat,sans-serif;font-weight:400;font-size:1.57143em;line-height:1.6em;color:#333333;}/*!sc*/
+.bWgCZK code{color:#c62828;background-color:rgba(38, 50, 56, 0.05);font-family:Courier,monospace;border-radius:2px;border:1px solid rgba(38, 50, 56, 0.1);padding:0 5px;font-size:13px;font-weight:400;word-break:break-word;}/*!sc*/
+.bWgCZK pre{font-family:Courier,monospace;white-space:pre;background-color:#11171a;color:white;padding:20px;overflow-x:auto;line-height:normal;border-radius:0;border:1px solid rgba(38, 50, 56, 0.1);}/*!sc*/
+.bWgCZK pre code{background-color:transparent;color:white;padding:0;}/*!sc*/
+.bWgCZK pre code:before,.bWgCZK pre code:after{content:none;}/*!sc*/
+.bWgCZK blockquote{margin:0;margin-bottom:1em;padding:0 15px;color:#777;border-left:4px solid #ddd;}/*!sc*/
+.bWgCZK img{max-width:100%;box-sizing:content-box;}/*!sc*/
+.bWgCZK ul,.bWgCZK ol{padding-left:2em;margin:0;margin-bottom:1em;}/*!sc*/
+.bWgCZK ul ul,.bWgCZK ol ul,.bWgCZK ul ol,.bWgCZK ol ol{margin-bottom:0;margin-top:0;}/*!sc*/
+.bWgCZK table{display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all;border-collapse:collapse;border-spacing:0;margin-top:1.5em;margin-bottom:1.5em;}/*!sc*/
+.bWgCZK table tr{background-color:#fff;border-top:1px solid #ccc;}/*!sc*/
+.bWgCZK table tr:nth-child(2n){background-color:#fafafa;}/*!sc*/
+.bWgCZK table th,.bWgCZK table td{padding:6px 13px;border:1px solid #ddd;}/*!sc*/
+.bWgCZK table th{text-align:left;font-weight:bold;}/*!sc*/
+.bWgCZK .share-link{cursor:pointer;margin-left:-20px;padding:0;line-height:1;width:20px;display:inline-block;outline:0;}/*!sc*/
+.bWgCZK .share-link:before{content:'';width:15px;height:15px;background-size:contain;background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgeD0iMCIgeT0iMCIgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA1MTIgNTEyIiB4bWw6c3BhY2U9InByZXNlcnZlIj48cGF0aCBmaWxsPSIjMDEwMTAxIiBkPSJNNDU5LjcgMjMzLjRsLTkwLjUgOTAuNWMtNTAgNTAtMTMxIDUwLTE4MSAwIC03LjktNy44LTE0LTE2LjctMTkuNC0yNS44bDQyLjEtNDIuMWMyLTIgNC41LTMuMiA2LjgtNC41IDIuOSA5LjkgOCAxOS4zIDE1LjggMjcuMiAyNSAyNSA2NS42IDI0LjkgOTAuNSAwbDkwLjUtOTAuNWMyNS0yNSAyNS02NS42IDAtOTAuNSAtMjQuOS0yNS02NS41LTI1LTkwLjUgMGwtMzIuMiAzMi4yYy0yNi4xLTEwLjItNTQuMi0xMi45LTgxLjYtOC45bDY4LjYtNjguNmM1MC01MCAxMzEtNTAgMTgxIDBDNTA5LjYgMTAyLjMgNTA5LjYgMTgzLjQgNDU5LjcgMjMzLjR6TTIyMC4zIDM4Mi4ybC0zMi4yIDMyLjJjLTI1IDI0LjktNjUuNiAyNC45LTkwLjUgMCAtMjUtMjUtMjUtNjUuNiAwLTkwLjVsOTAuNS05MC41YzI1LTI1IDY1LjUtMjUgOTAuNSAwIDcuOCA3LjggMTIuOSAxNy4yIDE1LjggMjcuMSAyLjQtMS40IDQuOC0yLjUgNi44LTQuNWw0Mi4xLTQyYy01LjQtOS4yLTExLjYtMTgtMTkuNC0yNS44IC01MC01MC0xMzEtNTAtMTgxIDBsLTkwLjUgOTAuNWMtNTAgNTAtNTAgMTMxIDAgMTgxIDUwIDUwIDEzMSA1MCAxODEgMGw2OC42LTY4LjZDMjc0LjYgMzk1LjEgMjQ2LjQgMzkyLjMgMjIwLjMgMzgyLjJ6Ii8+PC9zdmc+Cg==');opacity:0.5;visibility:hidden;display:inline-block;vertical-align:middle;}/*!sc*/
+.bWgCZK h1:hover>.share-link::before,.bWgCZK h2:hover>.share-link::before,.bWgCZK .share-link:hover::before{visibility:visible;}/*!sc*/
+.bWgCZK a{text-decoration:underline;color:#32329f;}/*!sc*/
+.bWgCZK a:visited{color:#32329f;}/*!sc*/
+.bWgCZK a:hover{color:#6868cf;text-decoration:underline;}/*!sc*/
+.iHFyeq{font-family:Roboto,sans-serif;font-weight:400;line-height:1.5em;}/*!sc*/
+.iHFyeq p:last-child{margin-bottom:0;}/*!sc*/
+.iHFyeq p:first-child{margin-top:0;}/*!sc*/
+.iHFyeq p:last-child{margin-bottom:0;}/*!sc*/
+.iHFyeq p{display:inline-block;}/*!sc*/
+.iHFyeq h1{font-family:Montserrat,sans-serif;font-weight:400;font-size:1.85714em;line-height:1.6em;color:#32329f;margin-top:0;}/*!sc*/
+.iHFyeq h2{font-family:Montserrat,sans-serif;font-weight:400;font-size:1.57143em;line-height:1.6em;color:#333333;}/*!sc*/
+.iHFyeq code{color:#c62828;background-color:rgba(38, 50, 56, 0.05);font-family:Courier,monospace;border-radius:2px;border:1px solid rgba(38, 50, 56, 0.1);padding:0 5px;font-size:13px;font-weight:400;word-break:break-word;}/*!sc*/
+.iHFyeq pre{font-family:Courier,monospace;white-space:pre;background-color:#11171a;color:white;padding:20px;overflow-x:auto;line-height:normal;border-radius:0;border:1px solid rgba(38, 50, 56, 0.1);}/*!sc*/
+.iHFyeq pre code{background-color:transparent;color:white;padding:0;}/*!sc*/
+.iHFyeq pre code:before,.iHFyeq pre code:after{content:none;}/*!sc*/
+.iHFyeq blockquote{margin:0;margin-bottom:1em;padding:0 15px;color:#777;border-left:4px solid #ddd;}/*!sc*/
+.iHFyeq img{max-width:100%;box-sizing:content-box;}/*!sc*/
+.iHFyeq ul,.iHFyeq ol{padding-left:2em;margin:0;margin-bottom:1em;}/*!sc*/
+.iHFyeq ul ul,.iHFyeq ol ul,.iHFyeq ul ol,.iHFyeq ol ol{margin-bottom:0;margin-top:0;}/*!sc*/
+.iHFyeq table{display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all;border-collapse:collapse;border-spacing:0;margin-top:1.5em;margin-bottom:1.5em;}/*!sc*/
+.iHFyeq table tr{background-color:#fff;border-top:1px solid #ccc;}/*!sc*/
+.iHFyeq table tr:nth-child(2n){background-color:#fafafa;}/*!sc*/
+.iHFyeq table th,.iHFyeq table td{padding:6px 13px;border:1px solid #ddd;}/*!sc*/
+.iHFyeq table th{text-align:left;font-weight:bold;}/*!sc*/
+.iHFyeq .share-link{cursor:pointer;margin-left:-20px;padding:0;line-height:1;width:20px;display:inline-block;outline:0;}/*!sc*/
+.iHFyeq .share-link:before{content:'';width:15px;height:15px;background-size:contain;background-image:url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgeD0iMCIgeT0iMCIgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHZpZXdCb3g9IjAgMCA1MTIgNTEyIiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCA1MTIgNTEyIiB4bWw6c3BhY2U9InByZXNlcnZlIj48cGF0aCBmaWxsPSIjMDEwMTAxIiBkPSJNNDU5LjcgMjMzLjRsLTkwLjUgOTAuNWMtNTAgNTAtMTMxIDUwLTE4MSAwIC03LjktNy44LTE0LTE2LjctMTkuNC0yNS44bDQyLjEtNDIuMWMyLTIgNC41LTMuMiA2LjgtNC41IDIuOSA5LjkgOCAxOS4zIDE1LjggMjcuMiAyNSAyNSA2NS42IDI0LjkgOTAuNSAwbDkwLjUtOTAuNWMyNS0yNSAyNS02NS42IDAtOTAuNSAtMjQuOS0yNS02NS41LTI1LTkwLjUgMGwtMzIuMiAzMi4yYy0yNi4xLTEwLjItNTQuMi0xMi45LTgxLjYtOC45bDY4LjYtNjguNmM1MC01MCAxMzEtNTAgMTgxIDBDNTA5LjYgMTAyLjMgNTA5LjYgMTgzLjQgNDU5LjcgMjMzLjR6TTIyMC4zIDM4Mi4ybC0zMi4yIDMyLjJjLTI1IDI0LjktNjUuNiAyNC45LTkwLjUgMCAtMjUtMjUtMjUtNjUuNiAwLTkwLjVsOTAuNS05MC41YzI1LTI1IDY1LjUtMjUgOTAuNSAwIDcuOCA3LjggMTIuOSAxNy4yIDE1LjggMjcuMSAyLjQtMS40IDQuOC0yLjUgNi44LTQuNWw0Mi4xLTQyYy01LjQtOS4yLTExLjYtMTgtMTkuNC0yNS44IC01MC01MC0xMzEtNTAtMTgxIDBsLTkwLjUgOTAuNWMtNTAgNTAtNTAgMTMxIDAgMTgxIDUwIDUwIDEzMSA1MCAxODEgMGw2OC42LTY4LjZDMjc0LjYgMzk1LjEgMjQ2LjQgMzkyLjMgMjIwLjMgMzgyLjJ6Ii8+PC9zdmc+Cg==');opacity:0.5;visibility:hidden;display:inline-block;vertical-align:middle;}/*!sc*/
+.iHFyeq h1:hover>.share-link::before,.iHFyeq h2:hover>.share-link::before,.iHFyeq .share-link:hover::before{visibility:visible;}/*!sc*/
+.iHFyeq a{text-decoration:underline;color:#32329f;}/*!sc*/
+.iHFyeq a:visited{color:#32329f;}/*!sc*/
+.iHFyeq a:hover{color:#6868cf;text-decoration:underline;}/*!sc*/
+data-styled.g43[id="sc-cBEgGa"]{content:"htbHfQ,bWgCZK,iHFyeq,"}/*!sc*/
+.dDDioG{display:inline;}/*!sc*/
+data-styled.g44[id="sc-ciCrSJ"]{content:"dDDioG,"}/*!sc*/
+.feYhXE{position:relative;}/*!sc*/
+data-styled.g45[id="sc-jcgtOs"]{content:"feYhXE,"}/*!sc*/
+.hHzuQA:hover>.sc-giQkEn{opacity:1;}/*!sc*/
+data-styled.g50[id="sc-cTZdpT"]{content:"hHzuQA,"}/*!sc*/
+.jgTAJz{font-family:Courier,monospace;font-size:13px;white-space:pre;contain:content;overflow-x:auto;}/*!sc*/
+.jgTAJz .redoc-json code>.collapser{display:none;pointer-events:none;}/*!sc*/
+.jgTAJz .callback-function{color:gray;}/*!sc*/
+.jgTAJz .collapser:after{content:'-';cursor:pointer;}/*!sc*/
+.jgTAJz .collapsed>.collapser:after{content:'+';cursor:pointer;}/*!sc*/
+.jgTAJz .ellipsis:after{content:' … ';}/*!sc*/
+.jgTAJz .collapsible{margin-left:2em;}/*!sc*/
+.jgTAJz .hoverable{padding-top:1px;padding-bottom:1px;padding-left:2px;padding-right:2px;border-radius:2px;}/*!sc*/
+.jgTAJz .hovered{background-color:rgba(235, 238, 249, 1);}/*!sc*/
+.jgTAJz .collapser{background-color:transparent;border:0;color:#fff;font-family:Courier,monospace;font-size:13px;padding-right:6px;padding-left:6px;padding-top:0;padding-bottom:0;display:flex;align-items:center;justify-content:center;width:15px;height:15px;position:absolute;top:4px;left:-1.5em;cursor:default;user-select:none;-webkit-user-select:none;padding:2px;}/*!sc*/
+.jgTAJz .collapser:focus{outline-color:#fff;outline-style:dotted;outline-width:1px;}/*!sc*/
+.jgTAJz ul{list-style-type:none;padding:0px;margin:0px 0px 0px 26px;}/*!sc*/
+.jgTAJz li{position:relative;display:block;}/*!sc*/
+.jgTAJz .hoverable{display:inline-block;}/*!sc*/
+.jgTAJz .selected{outline-style:solid;outline-width:1px;outline-style:dotted;}/*!sc*/
+.jgTAJz .collapsed>.collapsible{display:none;}/*!sc*/
+.jgTAJz .ellipsis{display:none;}/*!sc*/
+.jgTAJz .collapsed>.ellipsis{display:inherit;}/*!sc*/
+data-styled.g51[id="sc-jNDflC"]{content:"jgTAJz,"}/*!sc*/
+.kgKexQ{padding:0.9em;background-color:rgba(38,50,56,0.4);margin:0 0 10px 0;display:block;font-family:Montserrat,sans-serif;font-size:0.929em;line-height:1.5em;}/*!sc*/
+data-styled.g52[id="sc-dPqFhK"]{content:"kgKexQ,"}/*!sc*/
+.BuCyN{font-family:Montserrat,sans-serif;font-size:12px;position:absolute;z-index:1;top:-11px;left:12px;font-weight:600;color:rgba(255,255,255,0.7);}/*!sc*/
+data-styled.g53[id="sc-bBzIOb"]{content:"BuCyN,"}/*!sc*/
+.bMFMGt{position:relative;}/*!sc*/
+data-styled.g54[id="sc-cNSlRw"]{content:"bMFMGt,"}/*!sc*/
+.jUCYlq{margin-top:15px;}/*!sc*/
+data-styled.g57[id="sc-hUheUT"]{content:"jUCYlq,"}/*!sc*/
+.jMRTsl{vertical-align:middle;font-size:13px;line-height:20px;}/*!sc*/
+data-styled.g59[id="sc-gSILEF"]{content:"jMRTsl,"}/*!sc*/
+.NncTE{color:rgba(102,102,102,0.9);}/*!sc*/
+data-styled.g60[id="sc-lbpDNm"]{content:"NncTE,"}/*!sc*/
+.kUjPnZ{color:#666;}/*!sc*/
+data-styled.g61[id="sc-iNyHtD"]{content:"kUjPnZ,"}/*!sc*/
+.dHYagA{color:#d41f1c;font-size:0.9em;font-weight:normal;margin-left:20px;line-height:1;}/*!sc*/
+data-styled.g63[id="sc-eIYgEQ"]{content:"dHYagA,"}/*!sc*/
+.OXDYs{border-radius:2px;word-break:break-word;background-color:rgba(51,51,51,0.05);color:rgba(51,51,51,0.9);padding:0 5px;border:1px solid rgba(51,51,51,0.1);font-family:Courier,monospace;}/*!sc*/
+.sc-lbFCLI+.sc-lbFCLI{margin-left:0;}/*!sc*/
+data-styled.g67[id="sc-lbFCLI"]{content:"OXDYs,"}/*!sc*/
+.enoyBT{border-radius:2px;background-color:rgba(104,104,207,0.05);color:rgba(50,50,159,0.9);margin:0 5px;padding:0 5px;border:1px solid rgba(50,50,159,0.1);}/*!sc*/
+.sc-cljLBy+.sc-cljLBy{margin-left:0;}/*!sc*/
+data-styled.g69[id="sc-cljLBy"]{content:"enoyBT,"}/*!sc*/
+.cBgvIi{margin-top:0;margin-bottom:0.5em;}/*!sc*/
+data-styled.g93[id="sc-ctiVdb"]{content:"cBgvIi,"}/*!sc*/
+.ldPigm::before{content:'|';display:inline-block;opacity:0.5;width:15px;text-align:center;}/*!sc*/
+.ldPigm:last-child::after{display:none;}/*!sc*/
+data-styled.g95[id="sc-brKBMN"]{content:"ldPigm,"}/*!sc*/
+.iVyheB{overflow:hidden;}/*!sc*/
+data-styled.g96[id="sc-gILgRS"]{content:"iVyheB,"}/*!sc*/
+.juJQo{display:flex;flex-wrap:wrap;margin-left:-15px;}/*!sc*/
+data-styled.g97[id="sc-euUkyj"]{content:"juJQo,"}/*!sc*/
+.jjsIAS{width:9ex;display:inline-block;height:13px;line-height:13px;background-color:#333;border-radius:3px;background-repeat:no-repeat;background-position:6px 4px;font-size:7px;font-family:Verdana,sans-serif;color:white;text-transform:uppercase;text-align:center;font-weight:bold;vertical-align:middle;margin-right:6px;margin-top:2px;}/*!sc*/
+.jjsIAS.get{background-color:#2F8132;}/*!sc*/
+.jjsIAS.post{background-color:#186FAF;}/*!sc*/
+.jjsIAS.put{background-color:#95507c;}/*!sc*/
+.jjsIAS.options{background-color:#947014;}/*!sc*/
+.jjsIAS.patch{background-color:#bf581d;}/*!sc*/
+.jjsIAS.delete{background-color:#cc3333;}/*!sc*/
+.jjsIAS.basic{background-color:#707070;}/*!sc*/
+.jjsIAS.link{background-color:#07818F;}/*!sc*/
+.jjsIAS.head{background-color:#A23DAD;}/*!sc*/
+.jjsIAS.hook{background-color:#32329f;}/*!sc*/
+.jjsIAS.schema{background-color:#707070;}/*!sc*/
+data-styled.g101[id="sc-XpSrr"]{content:"jjsIAS,"}/*!sc*/
+.dqIuaF{margin:0;padding:0;}/*!sc*/
+.dqIuaF:first-child{padding-bottom:32px;}/*!sc*/
+.sc-ilnrqe .sc-ilnrqe{font-size:0.929em;}/*!sc*/
+.gTfiRs{margin:0;padding:0;display:none;}/*!sc*/
+.gTfiRs:first-child{padding-bottom:32px;}/*!sc*/
+.sc-ilnrqe .sc-ilnrqe{font-size:0.929em;}/*!sc*/
+data-styled.g102[id="sc-ilnrqe"]{content:"dqIuaF,gTfiRs,"}/*!sc*/
+.cQETmj{list-style:none inside none;overflow:hidden;text-overflow:ellipsis;padding:0;}/*!sc*/
+data-styled.g103[id="sc-uMZhz"]{content:"cQETmj,"}/*!sc*/
+.buxoPL{cursor:pointer;color:#333333;margin:0;padding:12.5px 20px;display:flex;justify-content:space-between;font-family:Montserrat,sans-serif;font-size:0.929em;text-transform:none;background-color:#fafafa;}/*!sc*/
+.buxoPL:hover{color:#32329f;background-color:#e1e1e1;}/*!sc*/
+.buxoPL .sc-dYjPD{height:1.5em;width:1.5em;}/*!sc*/
+.buxoPL .sc-dYjPD polygon{fill:#333333;}/*!sc*/
+.cGOuox{cursor:pointer;color:#333333;margin:0;padding:12.5px 20px;display:flex;justify-content:space-between;font-family:Montserrat,sans-serif;background-color:#fafafa;}/*!sc*/
+.cGOuox:hover{color:#32329f;background-color:#ededed;}/*!sc*/
+.cGOuox .sc-dYjPD{height:1.5em;width:1.5em;}/*!sc*/
+.cGOuox .sc-dYjPD polygon{fill:#333333;}/*!sc*/
+data-styled.g104[id="sc-bitxrY"]{content:"buxoPL,cGOuox,"}/*!sc*/
+.ehBKwY{display:inline-block;vertical-align:middle;width:calc(100% - 38px);overflow:hidden;text-overflow:ellipsis;}/*!sc*/
+data-styled.g105[id="sc-eHoOIp"]{content:"ehBKwY,"}/*!sc*/
+.gtBLyN{font-size:0.8em;margin-top:10px;text-align:center;position:fixed;width:260px;bottom:0;background:#fafafa;}/*!sc*/
+.gtBLyN a,.gtBLyN a:visited,.gtBLyN a:hover{color:#333333!important;padding:5px 0;border-top:1px solid #e1e1e1;text-decoration:none;display:flex;align-items:center;justify-content:center;}/*!sc*/
+.gtBLyN img{width:15px;margin-right:5px;}/*!sc*/
+@media screen and (max-width: 50rem){.gtBLyN{width:100%;}}/*!sc*/
+data-styled.g106[id="sc-hAkAFK"]{content:"gtBLyN,"}/*!sc*/
+.fYxpnv{cursor:pointer;position:relative;margin-bottom:5px;}/*!sc*/
+data-styled.g112[id="sc-fXwuWv"]{content:"fYxpnv,"}/*!sc*/
+.dsIRaZ{font-family:Courier,monospace;margin-left:10px;flex:1;overflow-x:hidden;text-overflow:ellipsis;}/*!sc*/
+data-styled.g113[id="sc-FpjRO"]{content:"dsIRaZ,"}/*!sc*/
+.jzaJhV{outline:0;color:inherit;width:100%;text-align:left;cursor:pointer;padding:10px 30px 10px 20px;border-radius:4px 4px 0 0;background-color:#11171a;display:flex;white-space:nowrap;align-items:center;border:1px solid transparent;border-bottom:0;transition:border-color 0.25s ease;}/*!sc*/
+.jzaJhV ..sc-FpjRO{color:#ffffff;}/*!sc*/
+.jzaJhV:focus{box-shadow:inset 0 2px 2px rgba(0, 0, 0, 0.45),0 2px 0 rgba(128, 128, 128, 0.25);}/*!sc*/
+data-styled.g114[id="sc-jWMFtl"]{content:"jzaJhV,"}/*!sc*/
+.hOENFc{font-size:0.929em;line-height:20px;background-color:#186FAF;color:#ffffff;padding:3px 10px;text-transform:uppercase;font-family:Montserrat,sans-serif;margin:0;}/*!sc*/
+.hlSrtW{font-size:0.929em;line-height:20px;background-color:#2F8132;color:#ffffff;padding:3px 10px;text-transform:uppercase;font-family:Montserrat,sans-serif;margin:0;}/*!sc*/
+data-styled.g115[id="sc-eEFuoE"]{content:"hOENFc,hlSrtW,"}/*!sc*/
+.tUxhh{position:absolute;width:100%;z-index:100;background:#fafafa;color:#263238;box-sizing:border-box;box-shadow:0 0 6px rgba(0, 0, 0, 0.33);overflow:hidden;border-bottom-left-radius:4px;border-bottom-right-radius:4px;transition:all 0.25s ease;visibility:hidden;transform:translateY(-50%) scaleY(0);}/*!sc*/
+data-styled.g116[id="sc-fmtEmb"]{content:"tUxhh,"}/*!sc*/
+.bAnPPh{padding:10px;}/*!sc*/
+data-styled.g117[id="sc-ljIcGq"]{content:"bAnPPh,"}/*!sc*/
+.PEJyb{padding:5px;border:1px solid #ccc;background:#fff;word-break:break-all;color:#32329f;}/*!sc*/
+.PEJyb >span{color:#333333;}/*!sc*/
+data-styled.g118[id="sc-jlJOIR"]{content:"PEJyb,"}/*!sc*/
+.bxWqzP{text-transform:lowercase;margin-left:0;line-height:1.5em;}/*!sc*/
+data-styled.g119[id="sc-dTCDEk"]{content:"bxWqzP,"}/*!sc*/
+.iSTZHA{display:block;border:0;width:100%;text-align:left;padding:10px;border-radius:2px;margin-bottom:4px;line-height:1.5em;cursor:pointer;color:#1d8127;background-color:rgba(29,129,39,0.07);}/*!sc*/
+.iSTZHA:focus{outline:auto #1d8127;}/*!sc*/
+.cKkXxa{display:block;border:0;width:100%;text-align:left;padding:10px;border-radius:2px;margin-bottom:4px;line-height:1.5em;cursor:pointer;color:#d41f1c;background-color:rgba(212,31,28,0.07);}/*!sc*/
+.cKkXxa:focus{outline:auto #d41f1c;}/*!sc*/
+data-styled.g121[id="sc-cbuLjy"]{content:"iSTZHA,cKkXxa,"}/*!sc*/
+.cqDULz{vertical-align:top;}/*!sc*/
+data-styled.g124[id="sc-fXmTIC"]{content:"cqDULz,"}/*!sc*/
+.hgNHCh{font-size:1.3em;padding:0.2em 0;margin:3em 0 1.1em;color:#333333;font-weight:normal;}/*!sc*/
+data-styled.g125[id="sc-fINhYD"]{content:"hgNHCh,"}/*!sc*/
+.ktZmcf{margin-bottom:30px;}/*!sc*/
+data-styled.g130[id="sc-iFUzrA"]{content:"ktZmcf,"}/*!sc*/
+.kjuNaM{user-select:none;width:20px;height:20px;align-self:center;display:flex;flex-direction:column;color:#32329f;}/*!sc*/
+data-styled.g131[id="sc-iruNHB"]{content:"kjuNaM,"}/*!sc*/
+.cczbHe{width:260px;background-color:#fafafa;overflow:hidden;display:flex;flex-direction:column;backface-visibility:hidden;height:100vh;position:sticky;position:-webkit-sticky;top:0;}/*!sc*/
+@media screen and (max-width: 50rem){.cczbHe{position:fixed;z-index:20;width:100%;background:#fafafa;display:none;}}/*!sc*/
+@media print{.cczbHe{display:none;}}/*!sc*/
+data-styled.g132[id="sc-eVYbGh"]{content:"cczbHe,"}/*!sc*/
+.ddPveE{outline:none;user-select:none;background-color:#f2f2f2;color:#32329f;display:none;cursor:pointer;position:fixed;right:20px;z-index:100;border-radius:50%;box-shadow:0 0 20px rgba(0, 0, 0, 0.3);bottom:44px;width:60px;height:60px;padding:0 20px;}/*!sc*/
+@media screen and (max-width: 50rem){.ddPveE{display:flex;}}/*!sc*/
+.ddPveE svg{color:#0065FB;}/*!sc*/
+@media print{.ddPveE{display:none;}}/*!sc*/
+data-styled.g133[id="sc-kTmAaw"]{content:"ddPveE,"}/*!sc*/
+.jetsmW{font-family:Roboto,sans-serif;font-size:14px;font-weight:400;line-height:1.5em;color:#333333;display:flex;position:relative;text-align:left;-webkit-font-smoothing:antialiased;font-smoothing:antialiased;text-rendering:optimizeSpeed!important;tap-highlight-color:rgba(0, 0, 0, 0);text-size-adjust:100%;}/*!sc*/
+.jetsmW *{box-sizing:border-box;-webkit-tap-highlight-color:rgba(255, 255, 255, 0);}/*!sc*/
+data-styled.g134[id="sc-dwkskT"]{content:"jetsmW,"}/*!sc*/
+.ldXCvc{z-index:1;position:relative;overflow:hidden;width:calc(100% - 260px);contain:layout;}/*!sc*/
+@media print,screen and (max-width: 50rem){.ldXCvc{width:100%;}}/*!sc*/
+data-styled.g135[id="sc-jtyQFi"]{content:"ldXCvc,"}/*!sc*/
+.bjzTxL{background:#263238;position:absolute;top:0;bottom:0;right:0;width:calc((100% - 260px) * 0.4);}/*!sc*/
+@media print,screen and (max-width: 75rem){.bjzTxL{display:none;}}/*!sc*/
+data-styled.g136[id="sc-ekVkVN"]{content:"bjzTxL,"}/*!sc*/
+.uMSfb{padding:5px 0;}/*!sc*/
+data-styled.g137[id="sc-kijJqc"]{content:"uMSfb,"}/*!sc*/
+.fTcICO{width:calc(100% - 40px);box-sizing:border-box;margin:0 20px;padding:5px 10px 5px 20px;border:0;border-bottom:1px solid #e1e1e1;font-family:Roboto,sans-serif;font-weight:bold;font-size:13px;color:#333333;background-color:transparent;outline:none;}/*!sc*/
+data-styled.g138[id="sc-cLhBAz"]{content:"fTcICO,"}/*!sc*/
+.kAmnlO{position:absolute;left:20px;height:1.8em;width:0.9em;}/*!sc*/
+.kAmnlO path{fill:#333333;}/*!sc*/
+data-styled.g139[id="sc-iIvZUO"]{content:"kAmnlO,"}/*!sc*/
+</style>
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" rel="stylesheet">
+</head>
+
+<body>
+  
+      <div id="redoc"><div class="sc-dwkskT jetsmW redoc-wrap"><div class="sc-eVYbGh cczbHe menu-content" style="top:0px;height:calc(100vh - 0px)"><div role="search" class="sc-kijJqc uMSfb"><svg class="sc-iIvZUO kAmnlO search-icon" version="1.1" viewBox="0 0 1000 1000" x="0px" xmlns="http://www.w3.org/2000/svg" y="0px"><path d="M968.2,849.4L667.3,549c83.9-136.5,66.7-317.4-51.7-435.6C477.1-25,252.5-25,113.9,113.4c-138.5,138.3-138.5,362.6,0,501C219.2,730.1,413.2,743,547.6,666.5l301.9,301.4c43.6,43.6,76.9,14.9,104.2-12.4C981,928.3,1011.8,893,968.2,849.4z M524.5,522c-88.9,88.7-233,88.7-321.8,0c-88.9-88.7-88.9-232.6,0-321.3c88.9-88.7,233-88.7,321.8,0C613.4,289.4,613.4,433.3,524.5,522z"></path></svg><input placeholder="Search..." aria-label="Search" type="text" class="sc-cLhBAz fTcICO search-input" value=""/></div><div class="sc-kLEbxe iOXjCz scrollbar-container undefined"><ul role="menu" class="sc-ilnrqe dqIuaF"><li tabindex="0" depth="1" data-item-id="section/Reservation-lifecycle" role="menuitem" aria-label="Reservation lifecycle" aria-expanded="false" class="sc-uMZhz cQETmj"><label class="sc-bitxrY buxoPL -depth1"><span width="calc(100% - 38px)" title="Reservation lifecycle" class="sc-eHoOIp ehBKwY">Reservation lifecycle</span></label></li><li tabindex="0" depth="1" data-item-id="section/Concurrency-guarantees" role="menuitem" aria-label="Concurrency guarantees" aria-expanded="false" class="sc-uMZhz cQETmj"><label class="sc-bitxrY buxoPL -depth1"><span width="calc(100% - 38px)" title="Concurrency guarantees" class="sc-eHoOIp ehBKwY">Concurrency guarantees</span></label></li><li tabindex="0" depth="1" data-item-id="section/Error-model" role="menuitem" aria-label="Error model" aria-expanded="false" class="sc-uMZhz cQETmj"><label class="sc-bitxrY buxoPL -depth1"><span width="calc(100% - 38px)" title="Error model" class="sc-eHoOIp ehBKwY">Error model</span></label></li><li tabindex="0" depth="1" data-item-id="section/Authentication" role="menuitem" aria-label="Authentication" aria-expanded="false" class="sc-uMZhz cQETmj"><label class="sc-bitxrY buxoPL -depth1"><span width="calc(100% - 38px)" title="Authentication" class="sc-eHoOIp ehBKwY">Authentication</span></label></li><li tabindex="0" depth="1" data-item-id="tag/Inventory" role="menuitem" aria-label="Inventory" aria-expanded="false" class="sc-uMZhz cQETmj"><label class="sc-bitxrY buxoPL -depth1"><span width="calc(100% - 38px)" title="Inventory" class="sc-eHoOIp ehBKwY">Inventory</span><svg class="sc-dYjPD kdgFPv" version="1.1" viewBox="0 0 24 24" x="0" xmlns="http://www.w3.org/2000/svg" y="0" aria-hidden="true"><polygon points="17.3 8.3 12 13.6 6.7 8.3 5.3 9.7 12 16.4 18.7 9.7 "></polygon></svg></label><ul role="menu" class="sc-ilnrqe gTfiRs"><li tabindex="0" depth="2" data-item-id="tag/Inventory/operation/reserveStock" role="menuitem" aria-label="Reserve stock" aria-expanded="false" class="sc-uMZhz cQETmj"><label class="sc-bitxrY cGOuox -depth2"><span type="post" class="sc-XpSrr jjsIAS operation-type post">post</span><span tabindex="0" width="calc(100% - 38px)" class="sc-eHoOIp ehBKwY">Reserve stock</span></label></li><li tabindex="0" depth="2" data-item-id="tag/Inventory/operation/confirmReservation" role="menuitem" aria-label="Confirm reservation" aria-expanded="false" class="sc-uMZhz cQETmj"><label class="sc-bitxrY cGOuox -depth2"><span type="post" class="sc-XpSrr jjsIAS operation-type post">post</span><span tabindex="0" width="calc(100% - 38px)" class="sc-eHoOIp ehBKwY">Confirm reservation</span></label></li><li tabindex="0" depth="2" data-item-id="tag/Inventory/operation/getStock" role="menuitem" aria-label="Check inventory status" aria-expanded="false" class="sc-uMZhz cQETmj"><label class="sc-bitxrY cGOuox -depth2"><span type="get" class="sc-XpSrr jjsIAS operation-type get">get</span><span tabindex="0" width="calc(100% - 38px)" class="sc-eHoOIp ehBKwY">Check inventory status</span></label></li></ul></li></ul><div class="sc-hAkAFK gtBLyN"><a target="_blank" rel="noopener noreferrer" href="https://redocly.com/redoc/">API docs by Redocly</a></div></div></div><div class="sc-kTmAaw ddPveE"><div class="sc-iruNHB kjuNaM"><svg class="" style="transform:translate(2px, -4px) rotate(180deg);transition:transform 0.2s ease" viewBox="0 0 926.23699 573.74994" version="1.1" x="0px" y="0px" width="15" height="15"><g transform="translate(904.92214,-879.1482)"><path d="
+          m -673.67664,1221.6502 -231.2455,-231.24803 55.6165,
+          -55.627 c 30.5891,-30.59485 56.1806,-55.627 56.8701,-55.627 0.6894,
+          0 79.8637,78.60862 175.9427,174.68583 l 174.6892,174.6858 174.6892,
+          -174.6858 c 96.079,-96.07721 175.253196,-174.68583 175.942696,
+          -174.68583 0.6895,0 26.281,25.03215 56.8701,
+          55.627 l 55.6165,55.627 -231.245496,231.24803 c -127.185,127.1864
+          -231.5279,231.248 -231.873,231.248 -0.3451,0 -104.688,
+          -104.0616 -231.873,-231.248 z
+        " fill="currentColor"></path></g></svg><svg class="" style="transform:translate(2px, 4px);transition:transform 0.2s ease" viewBox="0 0 926.23699 573.74994" version="1.1" x="0px" y="0px" width="15" height="15"><g transform="translate(904.92214,-879.1482)"><path d="
+          m -673.67664,1221.6502 -231.2455,-231.24803 55.6165,
+          -55.627 c 30.5891,-30.59485 56.1806,-55.627 56.8701,-55.627 0.6894,
+          0 79.8637,78.60862 175.9427,174.68583 l 174.6892,174.6858 174.6892,
+          -174.6858 c 96.079,-96.07721 175.253196,-174.68583 175.942696,
+          -174.68583 0.6895,0 26.281,25.03215 56.8701,
+          55.627 l 55.6165,55.627 -231.245496,231.24803 c -127.185,127.1864
+          -231.5279,231.248 -231.873,231.248 -0.3451,0 -104.688,
+          -104.0616 -231.873,-231.248 z
+        " fill="currentColor"></path></g></svg></div></div><div class="sc-jtyQFi ldXCvc api-content"><div class="sc-eCQgVK jleRXN"><div class="sc-iCECmn lhRBUS"><div class="sc-hKVpXn kktglN api-info"><h1 class="sc-fuztkK sc-ctiVdb eRMVDe cBgvIi">Inventory Reservation API<!-- --> <span>(<!-- -->1.0.0<!-- -->)</span></h1><p>Download OpenAPI specification<!-- -->:</p><div class="sc-iJSMbW sc-cBEgGa fiNpIH htbHfQ"><div class="sc-gILgRS iVyheB"><div class="sc-euUkyj juJQo"><span class="sc-brKBMN ldPigm">Inventory Platform Team<!-- -->:<!-- --> <a href="mailto:platform@example.com">platform@example.com</a></span> <!-- --> <span class="sc-brKBMN ldPigm">License:<!-- --> <a href="https://opensource.org/licenses/MIT">MIT</a></span> </div></div></div><div data-role="redoc-summary" html="" class="sc-iJSMbW sc-cBEgGa fiNpIH htbHfQ"></div><div data-role="redoc-description" html="&lt;p&gt;High-throughput inventory reservation for flash-sale events.&lt;/p&gt;
+&lt;p&gt;REST API for atomically reserving limited product inventory under high
+concurrency, confirming reservations, and querying real-time stock.&lt;/p&gt;
+" class="sc-iJSMbW sc-cBEgGa fiNpIH htbHfQ"><p>High-throughput inventory reservation for flash-sale events.</p>
+<p>REST API for atomically reserving limited product inventory under high
+concurrency, confirming reservations, and querying real-time stock.</p>
+</div></div></div></div><div id="section/Reservation-lifecycle" data-section-id="section/Reservation-lifecycle" class="sc-eCQgVK jleRXN"><div class="sc-iCECmn lhRBUS"><div class="sc-hKVpXn kktglN"><h2 class="sc-jrIDTr iSbGeC"><a class="sc-crPgjm jmoZom" href="#section/Reservation-lifecycle" aria-label="section/Reservation-lifecycle"></a>Reservation lifecycle</h2></div></div><div class="sc-hKVpXn kmAAAV"><div class="sc-iJSMbW sc-cBEgGa fiNpIH htbHfQ redoc-markdown " html="&lt;p&gt;A successful &lt;code&gt;reserve&lt;/code&gt; moves quantity from &lt;strong&gt;available&lt;/strong&gt; into &lt;strong&gt;reserved&lt;/strong&gt;
+for a &lt;strong&gt;5-minute TTL&lt;/strong&gt;. If not confirmed within the TTL, the held quantity is
+automatically returned to available stock by a background sweeper (and is
+additionally treated as expired on read).&lt;/p&gt;
+&lt;p&gt;Physical inventory (&lt;code&gt;total_stock&lt;/code&gt;) is decremented only on &lt;code&gt;confirm&lt;/code&gt;.&lt;/p&gt;
+"><p>A successful <code>reserve</code> moves quantity from <strong>available</strong> into <strong>reserved</strong>
+for a <strong>5-minute TTL</strong>. If not confirmed within the TTL, the held quantity is
+automatically returned to available stock by a background sweeper (and is
+additionally treated as expired on read).</p>
+<p>Physical inventory (<code>total_stock</code>) is decremented only on <code>confirm</code>.</p>
+</div></div></div><div id="section/Concurrency-guarantees" data-section-id="section/Concurrency-guarantees" class="sc-eCQgVK jleRXN"><div class="sc-iCECmn lhRBUS"><div class="sc-hKVpXn kktglN"><h2 class="sc-jrIDTr iSbGeC"><a class="sc-crPgjm jmoZom" href="#section/Concurrency-guarantees" aria-label="section/Concurrency-guarantees"></a>Concurrency guarantees</h2></div></div><div class="sc-hKVpXn kmAAAV"><div class="sc-iJSMbW sc-cBEgGa fiNpIH htbHfQ redoc-markdown " html="&lt;p&gt;Reserving is performed with a single atomic conditional &lt;code&gt;UPDATE&lt;/code&gt; in
+PostgreSQL, so requests never over-sell stock nor drive it negative. A
+concurrent or repeated &lt;code&gt;confirm&lt;/code&gt; is idempotent: only the first transition out
+of &lt;code&gt;ACTIVE&lt;/code&gt; succeeds.&lt;/p&gt;
+"><p>Reserving is performed with a single atomic conditional <code>UPDATE</code> in
+PostgreSQL, so requests never over-sell stock nor drive it negative. A
+concurrent or repeated <code>confirm</code> is idempotent: only the first transition out
+of <code>ACTIVE</code> succeeds.</p>
+</div></div></div><div id="section/Error-model" data-section-id="section/Error-model" class="sc-eCQgVK jleRXN"><div class="sc-iCECmn lhRBUS"><div class="sc-hKVpXn kktglN"><h2 class="sc-jrIDTr iSbGeC"><a class="sc-crPgjm jmoZom" href="#section/Error-model" aria-label="section/Error-model"></a>Error model</h2></div></div><div class="sc-hKVpXn kmAAAV"><div class="sc-iJSMbW sc-cBEgGa fiNpIH htbHfQ redoc-markdown " html="&lt;p&gt;Every non-2xx response uses a single envelope (&lt;code&gt;Error&lt;/code&gt;) with a stable,
+machine-readable &lt;code&gt;error.code&lt;/code&gt;, a human-readable &lt;code&gt;error.message&lt;/code&gt;, and optional
+structured &lt;code&gt;error.details&lt;/code&gt;.&lt;/p&gt;
+"><p>Every non-2xx response uses a single envelope (<code>Error</code>) with a stable,
+machine-readable <code>error.code</code>, a human-readable <code>error.message</code>, and optional
+structured <code>error.details</code>.</p>
+</div></div></div><div id="section/Authentication" data-section-id="section/Authentication" class="sc-eCQgVK jleRXN"><div class="sc-iCECmn lhRBUS"><div class="sc-hKVpXn kktglN"><h2 class="sc-jrIDTr iSbGeC"><a class="sc-crPgjm jmoZom" href="#section/Authentication" aria-label="section/Authentication"></a>Authentication</h2></div></div><div class="sc-hKVpXn kmAAAV"><div class="sc-iJSMbW sc-cBEgGa fiNpIH htbHfQ redoc-markdown " html="&lt;p&gt;Authentication is out of scope for this service: &lt;code&gt;user_id&lt;/code&gt; is a trusted,
+client-supplied identifier. No security scheme is required (see the
+root-level &lt;code&gt;security: []&lt;/code&gt;). A production deployment would derive &lt;code&gt;user_id&lt;/code&gt;
+from an authenticated session.&lt;/p&gt;
+"><p>Authentication is out of scope for this service: <code>user_id</code> is a trusted,
+client-supplied identifier. No security scheme is required (see the
+root-level <code>security: []</code>). A production deployment would derive <code>user_id</code>
+from an authenticated session.</p>
+</div></div></div><div id="tag/Inventory" data-section-id="tag/Inventory" class="sc-eCQgVK jleRXN"><div class="sc-iCECmn lhRBUS"><div class="sc-hKVpXn kktglN"><h2 class="sc-qdQOe MOVBZ"><a class="sc-crPgjm jmoZom" href="#tag/Inventory" aria-label="tag/Inventory"></a>Inventory</h2></div></div><div class="sc-hKVpXn kmAAAV"><div class="sc-iJSMbW sc-cBEgGa fiNpIH htbHfQ redoc-markdown " html="&lt;p&gt;Stock lookup and reservation operations&lt;/p&gt;
+"><p>Stock lookup and reservation operations</p>
+</div></div></div><div id="tag/Inventory/operation/reserveStock" data-section-id="tag/Inventory/operation/reserveStock" class="sc-eCQgVK grDwca"><div data-section-id="operation/reserveStock" id="operation/reserveStock" class="sc-iCECmn lhRBUS"><div class="sc-hKVpXn kktglN"><h2 class="sc-qdQOe MOVBZ"><a class="sc-crPgjm jmoZom" href="#tag/Inventory/operation/reserveStock" aria-label="tag/Inventory/operation/reserveStock"></a>Reserve stock<!-- --> </h2><div class="sc-iFUzrA ktZmcf"><div html="&lt;p&gt;Atomically reserve inventory for a user if sufficient available stock
+exists. The reservation expires after 5 minutes unless confirmed.&lt;/p&gt;
+" class="sc-iJSMbW sc-cBEgGa fiNpIH htbHfQ"><p>Atomically reserve inventory for a user if sufficient available stock
+exists. The reservation expires after 5 minutes unless confirmed.</p>
+</div></div><h5 class="sc-iqkkDd jprlAr">Request Body schema: <span class="sc-gXvOjn kxMqOs">application/json</span><div class="sc-gSILEF sc-eIYgEQ sc-dTCDEk jMRTsl dHYagA bxWqzP">required</div></h5><div html="" class="sc-iJSMbW sc-cBEgGa fiNpIH htbHfQ"></div><table class="sc-hHopjF bsjUmE"><tbody><tr class=""><td kind="field" title="user_id" class="sc-hCcPtG sc-fFCZOx jFNAwF lcdEEX"><span class="sc-ieCSdj kkMuqc"></span><span class="property-name">user_id</span><div class="sc-gSILEF sc-eIYgEQ jMRTsl dHYagA">required</div></td><td class="sc-bjLslk gLpZiQ"><div><div><span class="sc-gSILEF sc-lbpDNm jMRTsl NncTE"></span><span class="sc-gSILEF sc-iNyHtD jMRTsl kUjPnZ">string</span><span> <span class="sc-gSILEF sc-cljLBy jMRTsl enoyBT"> <!-- -->non-empty<!-- --> </span></span></div> <div><div html="&lt;p&gt;Identifier of the user requesting the reservation.&lt;/p&gt;
+" class="sc-iJSMbW sc-cBEgGa fiNpIH bWgCZK"><p>Identifier of the user requesting the reservation.</p>
+</div></div></div></td></tr><tr class=""><td kind="field" title="item_id" class="sc-hCcPtG sc-fFCZOx jFNAwF lcdEEX"><span class="sc-ieCSdj kkMuqc"></span><span class="property-name">item_id</span><div class="sc-gSILEF sc-eIYgEQ jMRTsl dHYagA">required</div></td><td class="sc-bjLslk gLpZiQ"><div><div><span class="sc-gSILEF sc-lbpDNm jMRTsl NncTE"></span><span class="sc-gSILEF sc-iNyHtD jMRTsl kUjPnZ">string</span><span> <span class="sc-gSILEF sc-cljLBy jMRTsl enoyBT"> <!-- -->non-empty<!-- --> </span></span></div> <div><div html="&lt;p&gt;Identifier of the item to reserve.&lt;/p&gt;
+" class="sc-iJSMbW sc-cBEgGa fiNpIH bWgCZK"><p>Identifier of the item to reserve.</p>
+</div></div></div></td></tr><tr class="last "><td kind="field" title="quantity" class="sc-hCcPtG sc-fFCZOx jFNAwF lcdEEX"><span class="sc-ieCSdj kkMuqc"></span><span class="property-name">quantity</span><div class="sc-gSILEF sc-eIYgEQ jMRTsl dHYagA">required</div></td><td class="sc-bjLslk gLpZiQ"><div><div><span class="sc-gSILEF sc-lbpDNm jMRTsl NncTE"></span><span class="sc-gSILEF sc-iNyHtD jMRTsl kUjPnZ">integer</span><span class="sc-gSILEF sc-iNyHtD jMRTsl kUjPnZ"> <!-- -->&lt;<!-- -->int32<!-- -->&gt;<!-- --> </span><span> <span class="sc-gSILEF sc-cljLBy jMRTsl enoyBT"> <!-- -->&gt;= 1<!-- --> </span></span></div> <div><div html="&lt;p&gt;Number of units to reserve. Must be at least 1.&lt;/p&gt;
+" class="sc-iJSMbW sc-cBEgGa fiNpIH bWgCZK"><p>Number of units to reserve. Must be at least 1.</p>
+</div></div></div></td></tr></tbody></table><div><h3 class="sc-fINhYD hgNHCh">Responses</h3><div><button class="sc-cbuLjy iSTZHA"><svg class="sc-dYjPD gngmNp" version="1.1" viewBox="0 0 24 24" x="0" xmlns="http://www.w3.org/2000/svg" y="0" aria-hidden="true"><polygon points="17.3 8.3 12 13.6 6.7 8.3 5.3 9.7 12 16.4 18.7 9.7 "></polygon></svg><strong class="sc-fXmTIC cqDULz">201<!-- --> </strong><div html="&lt;p&gt;Reservation created successfully.&lt;/p&gt;
+" class="sc-iJSMbW sc-cBEgGa sc-ciCrSJ fiNpIH iHFyeq dDDioG"><p>Reservation created successfully.</p>
+</div></button></div><div><button class="sc-cbuLjy cKkXxa"><svg class="sc-dYjPD hJoFRR" version="1.1" viewBox="0 0 24 24" x="0" xmlns="http://www.w3.org/2000/svg" y="0" aria-hidden="true"><polygon points="17.3 8.3 12 13.6 6.7 8.3 5.3 9.7 12 16.4 18.7 9.7 "></polygon></svg><strong class="sc-fXmTIC cqDULz">400<!-- --> </strong><div html="&lt;p&gt;The request payload or parameters failed validation.&lt;/p&gt;
+" class="sc-iJSMbW sc-cBEgGa sc-ciCrSJ fiNpIH iHFyeq dDDioG"><p>The request payload or parameters failed validation.</p>
+</div></button></div><div><button class="sc-cbuLjy cKkXxa"><svg class="sc-dYjPD hJoFRR" version="1.1" viewBox="0 0 24 24" x="0" xmlns="http://www.w3.org/2000/svg" y="0" aria-hidden="true"><polygon points="17.3 8.3 12 13.6 6.7 8.3 5.3 9.7 12 16.4 18.7 9.7 "></polygon></svg><strong class="sc-fXmTIC cqDULz">404<!-- --> </strong><div html="&lt;p&gt;The requested item does not exist.&lt;/p&gt;
+" class="sc-iJSMbW sc-cBEgGa sc-ciCrSJ fiNpIH iHFyeq dDDioG"><p>The requested item does not exist.</p>
+</div></button></div><div><button class="sc-cbuLjy cKkXxa"><svg class="sc-dYjPD hJoFRR" version="1.1" viewBox="0 0 24 24" x="0" xmlns="http://www.w3.org/2000/svg" y="0" aria-hidden="true"><polygon points="17.3 8.3 12 13.6 6.7 8.3 5.3 9.7 12 16.4 18.7 9.7 "></polygon></svg><strong class="sc-fXmTIC cqDULz">409<!-- --> </strong><div html="&lt;p&gt;Insufficient available stock to satisfy the request.&lt;/p&gt;
+" class="sc-iJSMbW sc-cBEgGa sc-ciCrSJ fiNpIH iHFyeq dDDioG"><p>Insufficient available stock to satisfy the request.</p>
+</div></button></div><div><button class="sc-cbuLjy cKkXxa"><svg class="sc-dYjPD hJoFRR" version="1.1" viewBox="0 0 24 24" x="0" xmlns="http://www.w3.org/2000/svg" y="0" aria-hidden="true"><polygon points="17.3 8.3 12 13.6 6.7 8.3 5.3 9.7 12 16.4 18.7 9.7 "></polygon></svg><strong class="sc-fXmTIC cqDULz">500<!-- --> </strong><div html="&lt;p&gt;An unexpected server-side error occurred.&lt;/p&gt;
+" class="sc-iJSMbW sc-cBEgGa sc-ciCrSJ fiNpIH iHFyeq dDDioG"><p>An unexpected server-side error occurred.</p>
+</div></button></div></div></div><div class="sc-jSppWd sc-gKkgUA fpMlmc bdQQyo"><div class="sc-fXwuWv fYxpnv"><button class="sc-jWMFtl jzaJhV"><span type="post" class="sc-eEFuoE hOENFc http-verb post">post</span><span class="sc-FpjRO dsIRaZ">/api/v1/inventory/reserve</span><svg class="sc-dYjPD bQKUih" style="margin-right:-25px" version="1.1" viewBox="0 0 24 24" x="0" xmlns="http://www.w3.org/2000/svg" y="0" aria-hidden="true"><polygon points="17.3 8.3 12 13.6 6.7 8.3 5.3 9.7 12 16.4 18.7 9.7 "></polygon></svg></button><div aria-hidden="true" class="sc-fmtEmb tUxhh"><div class="sc-ljIcGq bAnPPh"><div html="&lt;p&gt;Local development (docker compose up)&lt;/p&gt;
+" class="sc-iJSMbW sc-cBEgGa fiNpIH bWgCZK"><p>Local development (docker compose up)</p>
+</div><div tabindex="0" role="button"><div class="sc-jlJOIR PEJyb"><span>http://localhost:8080</span>/api/v1/inventory/reserve</div></div></div></div></div><div><h3 class="sc-kEbgWM iamDfj"> <!-- -->Request samples<!-- --> </h3><div class="sc-cxxQMU fcGuQW" data-rttabs="true"><ul class="react-tabs__tab-list" role="tablist"><li class="react-tabs__tab react-tabs__tab--selected" role="tab" id="tab_R_iiqq_0" aria-selected="true" aria-disabled="false" aria-controls="panel_R_iiqq_0" tabindex="0" data-rttab="true">Payload</li></ul><div class="react-tabs__tab-panel react-tabs__tab-panel--selected" role="tabpanel" id="panel_R_iiqq_0" aria-labelledby="tab_R_iiqq_0"><div><div class="sc-cNSlRw bMFMGt"><span class="sc-bBzIOb BuCyN">Content type</span><div class="sc-dPqFhK kgKexQ">application/json</div></div><div class="sc-hUheUT jUCYlq"><div class="sc-cTZdpT hHzuQA"><div class="sc-giQkEn dzKJV"><button><div class="sc-jcgtOs feYhXE">Copy</div></button></div><div tabindex="0" class="sc-iJSMbW fiNpIH sc-jNDflC jgTAJz"><div class="redoc-json"><code><button class="collapser" aria-label="collapse"></button><span class="token punctuation">{</span><span class="ellipsis"></span><ul class="obj collapsible"><li><div class="hoverable "><span class="property token string">"user_id"</span>: <span class="token string">&quot;usr_9981&quot;</span><span class="token punctuation">,</span></div></li><li><div class="hoverable "><span class="property token string">"item_id"</span>: <span class="token string">&quot;item_4021&quot;</span><span class="token punctuation">,</span></div></li><li><div class="hoverable "><span class="property token string">"quantity"</span>: <span class="token number">2</span></div></li></ul><span class="token punctuation">}</span></code></div></div></div></div></div></div></div></div><div><h3 class="sc-kEbgWM iamDfj"> <!-- -->Response samples<!-- --> </h3><div class="sc-cxxQMU fcGuQW" data-rttabs="true"><ul class="react-tabs__tab-list" role="tablist"><li class="tab-success react-tabs__tab--selected" role="tab" id="tab_R_jiqq_0" aria-selected="true" aria-disabled="false" aria-controls="panel_R_jiqq_0" tabindex="0" data-rttab="true">201</li><li class="tab-error" role="tab" id="tab_R_jiqq_1" aria-selected="false" aria-disabled="false" aria-controls="panel_R_jiqq_1" data-rttab="true">400</li><li class="tab-error" role="tab" id="tab_R_jiqq_2" aria-selected="false" aria-disabled="false" aria-controls="panel_R_jiqq_2" data-rttab="true">404</li><li class="tab-error" role="tab" id="tab_R_jiqq_3" aria-selected="false" aria-disabled="false" aria-controls="panel_R_jiqq_3" data-rttab="true">409</li><li class="tab-error" role="tab" id="tab_R_jiqq_4" aria-selected="false" aria-disabled="false" aria-controls="panel_R_jiqq_4" data-rttab="true">500</li></ul><div class="react-tabs__tab-panel react-tabs__tab-panel--selected" role="tabpanel" id="panel_R_jiqq_0" aria-labelledby="tab_R_jiqq_0"><div><div class="sc-cNSlRw bMFMGt"><span class="sc-bBzIOb BuCyN">Content type</span><div class="sc-dPqFhK kgKexQ">application/json</div></div><div class="sc-hUheUT jUCYlq"><div class="sc-cTZdpT hHzuQA"><div class="sc-giQkEn dzKJV"><button><div class="sc-jcgtOs feYhXE">Copy</div></button></div><div tabindex="0" class="sc-iJSMbW fiNpIH sc-jNDflC jgTAJz"><div class="redoc-json"><code><button class="collapser" aria-label="collapse"></button><span class="token punctuation">{</span><span class="ellipsis"></span><ul class="obj collapsible"><li><div class="hoverable "><span class="property token string">"status"</span>: <span class="token string">&quot;success&quot;</span><span class="token punctuation">,</span></div></li><li><div class="hoverable "><span class="property token string">"reservation_id"</span>: <span class="token string">&quot;res_883291&quot;</span><span class="token punctuation">,</span></div></li><li><div class="hoverable "><span class="property token string">"item_id"</span>: <span class="token string">&quot;item_4021&quot;</span><span class="token punctuation">,</span></div></li><li><div class="hoverable "><span class="property token string">"quantity"</span>: <span class="token number">2</span><span class="token punctuation">,</span></div></li><li><div class="hoverable "><span class="property token string">"expires_at"</span>: <span class="token string">&quot;2026-07-20T16:35:00Z&quot;</span></div></li></ul><span class="token punctuation">}</span></code></div></div></div></div></div></div><div class="react-tabs__tab-panel" role="tabpanel" id="panel_R_jiqq_1" aria-labelledby="tab_R_jiqq_1"></div><div class="react-tabs__tab-panel" role="tabpanel" id="panel_R_jiqq_2" aria-labelledby="tab_R_jiqq_2"></div><div class="react-tabs__tab-panel" role="tabpanel" id="panel_R_jiqq_3" aria-labelledby="tab_R_jiqq_3"></div><div class="react-tabs__tab-panel" role="tabpanel" id="panel_R_jiqq_4" aria-labelledby="tab_R_jiqq_4"></div></div></div></div></div></div><div id="tag/Inventory/operation/confirmReservation" data-section-id="tag/Inventory/operation/confirmReservation" class="sc-eCQgVK grDwca"><div data-section-id="operation/confirmReservation" id="operation/confirmReservation" class="sc-iCECmn lhRBUS"><div class="sc-hKVpXn kktglN"><h2 class="sc-qdQOe MOVBZ"><a class="sc-crPgjm jmoZom" href="#tag/Inventory/operation/confirmReservation" aria-label="tag/Inventory/operation/confirmReservation"></a>Confirm reservation<!-- --> </h2><div class="sc-iFUzrA ktZmcf"><div html="&lt;p&gt;Permanently commit an active reservation, completing the order process
+and decrementing physical inventory. Idempotent: only a reservation in
+the &lt;code&gt;ACTIVE&lt;/code&gt; state can be confirmed.&lt;/p&gt;
+" class="sc-iJSMbW sc-cBEgGa fiNpIH htbHfQ"><p>Permanently commit an active reservation, completing the order process
+and decrementing physical inventory. Idempotent: only a reservation in
+the <code>ACTIVE</code> state can be confirmed.</p>
+</div></div><h5 class="sc-iqkkDd jprlAr">Request Body schema: <span class="sc-gXvOjn kxMqOs">application/json</span><div class="sc-gSILEF sc-eIYgEQ sc-dTCDEk jMRTsl dHYagA bxWqzP">required</div></h5><div html="" class="sc-iJSMbW sc-cBEgGa fiNpIH htbHfQ"></div><table class="sc-hHopjF bsjUmE"><tbody><tr class="last "><td kind="field" title="reservation_id" class="sc-hCcPtG sc-fFCZOx jFNAwF lcdEEX"><span class="sc-ieCSdj kkMuqc"></span><span class="property-name">reservation_id</span><div class="sc-gSILEF sc-eIYgEQ jMRTsl dHYagA">required</div></td><td class="sc-bjLslk gLpZiQ"><div><div><span class="sc-gSILEF sc-lbpDNm jMRTsl NncTE"></span><span class="sc-gSILEF sc-iNyHtD jMRTsl kUjPnZ">string</span><span> <span class="sc-gSILEF sc-cljLBy jMRTsl enoyBT"> <!-- -->non-empty<!-- --> </span></span></div> <div><div html="" class="sc-iJSMbW sc-cBEgGa fiNpIH bWgCZK"></div></div></div></td></tr></tbody></table><div><h3 class="sc-fINhYD hgNHCh">Responses</h3><div><button class="sc-cbuLjy iSTZHA"><svg class="sc-dYjPD gngmNp" version="1.1" viewBox="0 0 24 24" x="0" xmlns="http://www.w3.org/2000/svg" y="0" aria-hidden="true"><polygon points="17.3 8.3 12 13.6 6.7 8.3 5.3 9.7 12 16.4 18.7 9.7 "></polygon></svg><strong class="sc-fXmTIC cqDULz">200<!-- --> </strong><div html="&lt;p&gt;Reservation confirmed successfully.&lt;/p&gt;
+" class="sc-iJSMbW sc-cBEgGa sc-ciCrSJ fiNpIH iHFyeq dDDioG"><p>Reservation confirmed successfully.</p>
+</div></button></div><div><button class="sc-cbuLjy cKkXxa"><svg class="sc-dYjPD hJoFRR" version="1.1" viewBox="0 0 24 24" x="0" xmlns="http://www.w3.org/2000/svg" y="0" aria-hidden="true"><polygon points="17.3 8.3 12 13.6 6.7 8.3 5.3 9.7 12 16.4 18.7 9.7 "></polygon></svg><strong class="sc-fXmTIC cqDULz">400<!-- --> </strong><div html="&lt;p&gt;The request payload or parameters failed validation.&lt;/p&gt;
+" class="sc-iJSMbW sc-cBEgGa sc-ciCrSJ fiNpIH iHFyeq dDDioG"><p>The request payload or parameters failed validation.</p>
+</div></button></div><div><button class="sc-cbuLjy cKkXxa"><svg class="sc-dYjPD hJoFRR" version="1.1" viewBox="0 0 24 24" x="0" xmlns="http://www.w3.org/2000/svg" y="0" aria-hidden="true"><polygon points="17.3 8.3 12 13.6 6.7 8.3 5.3 9.7 12 16.4 18.7 9.7 "></polygon></svg><strong class="sc-fXmTIC cqDULz">404<!-- --> </strong><div html="&lt;p&gt;The reservation does not exist.&lt;/p&gt;
+" class="sc-iJSMbW sc-cBEgGa sc-ciCrSJ fiNpIH iHFyeq dDDioG"><p>The reservation does not exist.</p>
+</div></button></div><div><button class="sc-cbuLjy cKkXxa"><svg class="sc-dYjPD hJoFRR" version="1.1" viewBox="0 0 24 24" x="0" xmlns="http://www.w3.org/2000/svg" y="0" aria-hidden="true"><polygon points="17.3 8.3 12 13.6 6.7 8.3 5.3 9.7 12 16.4 18.7 9.7 "></polygon></svg><strong class="sc-fXmTIC cqDULz">409<!-- --> </strong><div html="&lt;p&gt;The reservation has already been confirmed.&lt;/p&gt;
+" class="sc-iJSMbW sc-cBEgGa sc-ciCrSJ fiNpIH iHFyeq dDDioG"><p>The reservation has already been confirmed.</p>
+</div></button></div><div><button class="sc-cbuLjy cKkXxa"><svg class="sc-dYjPD hJoFRR" version="1.1" viewBox="0 0 24 24" x="0" xmlns="http://www.w3.org/2000/svg" y="0" aria-hidden="true"><polygon points="17.3 8.3 12 13.6 6.7 8.3 5.3 9.7 12 16.4 18.7 9.7 "></polygon></svg><strong class="sc-fXmTIC cqDULz">410<!-- --> </strong><div html="&lt;p&gt;The reservation has expired and can no longer be confirmed.&lt;/p&gt;
+" class="sc-iJSMbW sc-cBEgGa sc-ciCrSJ fiNpIH iHFyeq dDDioG"><p>The reservation has expired and can no longer be confirmed.</p>
+</div></button></div><div><button class="sc-cbuLjy cKkXxa"><svg class="sc-dYjPD hJoFRR" version="1.1" viewBox="0 0 24 24" x="0" xmlns="http://www.w3.org/2000/svg" y="0" aria-hidden="true"><polygon points="17.3 8.3 12 13.6 6.7 8.3 5.3 9.7 12 16.4 18.7 9.7 "></polygon></svg><strong class="sc-fXmTIC cqDULz">500<!-- --> </strong><div html="&lt;p&gt;An unexpected server-side error occurred.&lt;/p&gt;
+" class="sc-iJSMbW sc-cBEgGa sc-ciCrSJ fiNpIH iHFyeq dDDioG"><p>An unexpected server-side error occurred.</p>
+</div></button></div></div></div><div class="sc-jSppWd sc-gKkgUA fpMlmc bdQQyo"><div class="sc-fXwuWv fYxpnv"><button class="sc-jWMFtl jzaJhV"><span type="post" class="sc-eEFuoE hOENFc http-verb post">post</span><span class="sc-FpjRO dsIRaZ">/api/v1/inventory/confirm</span><svg class="sc-dYjPD bQKUih" style="margin-right:-25px" version="1.1" viewBox="0 0 24 24" x="0" xmlns="http://www.w3.org/2000/svg" y="0" aria-hidden="true"><polygon points="17.3 8.3 12 13.6 6.7 8.3 5.3 9.7 12 16.4 18.7 9.7 "></polygon></svg></button><div aria-hidden="true" class="sc-fmtEmb tUxhh"><div class="sc-ljIcGq bAnPPh"><div html="&lt;p&gt;Local development (docker compose up)&lt;/p&gt;
+" class="sc-iJSMbW sc-cBEgGa fiNpIH bWgCZK"><p>Local development (docker compose up)</p>
+</div><div tabindex="0" role="button"><div class="sc-jlJOIR PEJyb"><span>http://localhost:8080</span>/api/v1/inventory/confirm</div></div></div></div></div><div><h3 class="sc-kEbgWM iamDfj"> <!-- -->Request samples<!-- --> </h3><div class="sc-cxxQMU fcGuQW" data-rttabs="true"><ul class="react-tabs__tab-list" role="tablist"><li class="react-tabs__tab react-tabs__tab--selected" role="tab" id="tab_R_ijaq_0" aria-selected="true" aria-disabled="false" aria-controls="panel_R_ijaq_0" tabindex="0" data-rttab="true">Payload</li></ul><div class="react-tabs__tab-panel react-tabs__tab-panel--selected" role="tabpanel" id="panel_R_ijaq_0" aria-labelledby="tab_R_ijaq_0"><div><div class="sc-cNSlRw bMFMGt"><span class="sc-bBzIOb BuCyN">Content type</span><div class="sc-dPqFhK kgKexQ">application/json</div></div><div class="sc-hUheUT jUCYlq"><div class="sc-cTZdpT hHzuQA"><div class="sc-giQkEn dzKJV"><button><div class="sc-jcgtOs feYhXE">Copy</div></button></div><div tabindex="0" class="sc-iJSMbW fiNpIH sc-jNDflC jgTAJz"><div class="redoc-json"><code><button class="collapser" aria-label="collapse"></button><span class="token punctuation">{</span><span class="ellipsis"></span><ul class="obj collapsible"><li><div class="hoverable "><span class="property token string">"reservation_id"</span>: <span class="token string">&quot;res_883291&quot;</span></div></li></ul><span class="token punctuation">}</span></code></div></div></div></div></div></div></div></div><div><h3 class="sc-kEbgWM iamDfj"> <!-- -->Response samples<!-- --> </h3><div class="sc-cxxQMU fcGuQW" data-rttabs="true"><ul class="react-tabs__tab-list" role="tablist"><li class="tab-success react-tabs__tab--selected" role="tab" id="tab_R_jjaq_0" aria-selected="true" aria-disabled="false" aria-controls="panel_R_jjaq_0" tabindex="0" data-rttab="true">200</li><li class="tab-error" role="tab" id="tab_R_jjaq_1" aria-selected="false" aria-disabled="false" aria-controls="panel_R_jjaq_1" data-rttab="true">400</li><li class="tab-error" role="tab" id="tab_R_jjaq_2" aria-selected="false" aria-disabled="false" aria-controls="panel_R_jjaq_2" data-rttab="true">404</li><li class="tab-error" role="tab" id="tab_R_jjaq_3" aria-selected="false" aria-disabled="false" aria-controls="panel_R_jjaq_3" data-rttab="true">409</li><li class="tab-error" role="tab" id="tab_R_jjaq_4" aria-selected="false" aria-disabled="false" aria-controls="panel_R_jjaq_4" data-rttab="true">410</li><li class="tab-error" role="tab" id="tab_R_jjaq_5" aria-selected="false" aria-disabled="false" aria-controls="panel_R_jjaq_5" data-rttab="true">500</li></ul><div class="react-tabs__tab-panel react-tabs__tab-panel--selected" role="tabpanel" id="panel_R_jjaq_0" aria-labelledby="tab_R_jjaq_0"><div><div class="sc-cNSlRw bMFMGt"><span class="sc-bBzIOb BuCyN">Content type</span><div class="sc-dPqFhK kgKexQ">application/json</div></div><div class="sc-hUheUT jUCYlq"><div class="sc-cTZdpT hHzuQA"><div class="sc-giQkEn dzKJV"><button><div class="sc-jcgtOs feYhXE">Copy</div></button></div><div tabindex="0" class="sc-iJSMbW fiNpIH sc-jNDflC jgTAJz"><div class="redoc-json"><code><button class="collapser" aria-label="collapse"></button><span class="token punctuation">{</span><span class="ellipsis"></span><ul class="obj collapsible"><li><div class="hoverable "><span class="property token string">"status"</span>: <span class="token string">&quot;success&quot;</span><span class="token punctuation">,</span></div></li><li><div class="hoverable "><span class="property token string">"reservation_id"</span>: <span class="token string">&quot;res_883291&quot;</span><span class="token punctuation">,</span></div></li><li><div class="hoverable "><span class="property token string">"confirmed_at"</span>: <span class="token string">&quot;2026-07-20T16:32:00Z&quot;</span></div></li></ul><span class="token punctuation">}</span></code></div></div></div></div></div></div><div class="react-tabs__tab-panel" role="tabpanel" id="panel_R_jjaq_1" aria-labelledby="tab_R_jjaq_1"></div><div class="react-tabs__tab-panel" role="tabpanel" id="panel_R_jjaq_2" aria-labelledby="tab_R_jjaq_2"></div><div class="react-tabs__tab-panel" role="tabpanel" id="panel_R_jjaq_3" aria-labelledby="tab_R_jjaq_3"></div><div class="react-tabs__tab-panel" role="tabpanel" id="panel_R_jjaq_4" aria-labelledby="tab_R_jjaq_4"></div><div class="react-tabs__tab-panel" role="tabpanel" id="panel_R_jjaq_5" aria-labelledby="tab_R_jjaq_5"></div></div></div></div></div></div><div id="tag/Inventory/operation/getStock" data-section-id="tag/Inventory/operation/getStock" class="sc-eCQgVK grDwca"><div data-section-id="operation/getStock" id="operation/getStock" class="sc-iCECmn lhRBUS"><div class="sc-hKVpXn kktglN"><h2 class="sc-qdQOe MOVBZ"><a class="sc-crPgjm jmoZom" href="#tag/Inventory/operation/getStock" aria-label="tag/Inventory/operation/getStock"></a>Check inventory status<!-- --> </h2><div class="sc-iFUzrA ktZmcf"><div html="&lt;p&gt;Return the real-time stock breakdown for an item. &lt;code&gt;available_stock&lt;/code&gt; is
+derived as &lt;code&gt;total_stock - reserved_stock&lt;/code&gt;.&lt;/p&gt;
+" class="sc-iJSMbW sc-cBEgGa fiNpIH htbHfQ"><p>Return the real-time stock breakdown for an item. <code>available_stock</code> is
+derived as <code>total_stock - reserved_stock</code>.</p>
+</div></div><div><h5 class="sc-iqkkDd jprlAr">query<!-- --> Parameters</h5><table class="sc-hHopjF bsjUmE"><tbody><tr class="last "><td kind="field" title="item_id" class="sc-hCcPtG sc-fFCZOx jFNAwF lcdEEX"><span class="sc-ieCSdj kkMuqc"></span><span class="property-name">item_id</span><div class="sc-gSILEF sc-eIYgEQ jMRTsl dHYagA">required</div></td><td class="sc-bjLslk gLpZiQ"><div><div><span class="sc-gSILEF sc-lbpDNm jMRTsl NncTE"></span><span class="sc-gSILEF sc-iNyHtD jMRTsl kUjPnZ">string</span><span> <span class="sc-gSILEF sc-cljLBy jMRTsl enoyBT"> <!-- -->non-empty<!-- --> </span></span></div> <div><span class="sc-gSILEF jMRTsl"> <!-- -->Example:<!-- --> </span> <span class="sc-gSILEF sc-lbFCLI jMRTsl OXDYs">item_id=item_4021</span></div><div><div html="&lt;p&gt;Unique identifier of the item.&lt;/p&gt;
+" class="sc-iJSMbW sc-cBEgGa fiNpIH bWgCZK"><p>Unique identifier of the item.</p>
+</div></div></div></td></tr></tbody></table></div><div><h3 class="sc-fINhYD hgNHCh">Responses</h3><div><button class="sc-cbuLjy iSTZHA"><svg class="sc-dYjPD gngmNp" version="1.1" viewBox="0 0 24 24" x="0" xmlns="http://www.w3.org/2000/svg" y="0" aria-hidden="true"><polygon points="17.3 8.3 12 13.6 6.7 8.3 5.3 9.7 12 16.4 18.7 9.7 "></polygon></svg><strong class="sc-fXmTIC cqDULz">200<!-- --> </strong><div html="&lt;p&gt;Stock breakdown returned.&lt;/p&gt;
+" class="sc-iJSMbW sc-cBEgGa sc-ciCrSJ fiNpIH iHFyeq dDDioG"><p>Stock breakdown returned.</p>
+</div></button></div><div><button class="sc-cbuLjy cKkXxa"><svg class="sc-dYjPD hJoFRR" version="1.1" viewBox="0 0 24 24" x="0" xmlns="http://www.w3.org/2000/svg" y="0" aria-hidden="true"><polygon points="17.3 8.3 12 13.6 6.7 8.3 5.3 9.7 12 16.4 18.7 9.7 "></polygon></svg><strong class="sc-fXmTIC cqDULz">400<!-- --> </strong><div html="&lt;p&gt;The request payload or parameters failed validation.&lt;/p&gt;
+" class="sc-iJSMbW sc-cBEgGa sc-ciCrSJ fiNpIH iHFyeq dDDioG"><p>The request payload or parameters failed validation.</p>
+</div></button></div><div><button class="sc-cbuLjy cKkXxa"><svg class="sc-dYjPD hJoFRR" version="1.1" viewBox="0 0 24 24" x="0" xmlns="http://www.w3.org/2000/svg" y="0" aria-hidden="true"><polygon points="17.3 8.3 12 13.6 6.7 8.3 5.3 9.7 12 16.4 18.7 9.7 "></polygon></svg><strong class="sc-fXmTIC cqDULz">404<!-- --> </strong><div html="&lt;p&gt;The requested item does not exist.&lt;/p&gt;
+" class="sc-iJSMbW sc-cBEgGa sc-ciCrSJ fiNpIH iHFyeq dDDioG"><p>The requested item does not exist.</p>
+</div></button></div><div><button class="sc-cbuLjy cKkXxa"><svg class="sc-dYjPD hJoFRR" version="1.1" viewBox="0 0 24 24" x="0" xmlns="http://www.w3.org/2000/svg" y="0" aria-hidden="true"><polygon points="17.3 8.3 12 13.6 6.7 8.3 5.3 9.7 12 16.4 18.7 9.7 "></polygon></svg><strong class="sc-fXmTIC cqDULz">500<!-- --> </strong><div html="&lt;p&gt;An unexpected server-side error occurred.&lt;/p&gt;
+" class="sc-iJSMbW sc-cBEgGa sc-ciCrSJ fiNpIH iHFyeq dDDioG"><p>An unexpected server-side error occurred.</p>
+</div></button></div></div></div><div class="sc-jSppWd sc-gKkgUA fpMlmc bdQQyo"><div class="sc-fXwuWv fYxpnv"><button class="sc-jWMFtl jzaJhV"><span type="get" class="sc-eEFuoE hlSrtW http-verb get">get</span><span class="sc-FpjRO dsIRaZ">/api/v1/inventory/stock</span><svg class="sc-dYjPD bQKUih" style="margin-right:-25px" version="1.1" viewBox="0 0 24 24" x="0" xmlns="http://www.w3.org/2000/svg" y="0" aria-hidden="true"><polygon points="17.3 8.3 12 13.6 6.7 8.3 5.3 9.7 12 16.4 18.7 9.7 "></polygon></svg></button><div aria-hidden="true" class="sc-fmtEmb tUxhh"><div class="sc-ljIcGq bAnPPh"><div html="&lt;p&gt;Local development (docker compose up)&lt;/p&gt;
+" class="sc-iJSMbW sc-cBEgGa fiNpIH bWgCZK"><p>Local development (docker compose up)</p>
+</div><div tabindex="0" role="button"><div class="sc-jlJOIR PEJyb"><span>http://localhost:8080</span>/api/v1/inventory/stock</div></div></div></div></div><div><h3 class="sc-kEbgWM iamDfj"> <!-- -->Response samples<!-- --> </h3><div class="sc-cxxQMU fcGuQW" data-rttabs="true"><ul class="react-tabs__tab-list" role="tablist"><li class="tab-success react-tabs__tab--selected" role="tab" id="tab_R_jjqq_0" aria-selected="true" aria-disabled="false" aria-controls="panel_R_jjqq_0" tabindex="0" data-rttab="true">200</li><li class="tab-error" role="tab" id="tab_R_jjqq_1" aria-selected="false" aria-disabled="false" aria-controls="panel_R_jjqq_1" data-rttab="true">400</li><li class="tab-error" role="tab" id="tab_R_jjqq_2" aria-selected="false" aria-disabled="false" aria-controls="panel_R_jjqq_2" data-rttab="true">404</li><li class="tab-error" role="tab" id="tab_R_jjqq_3" aria-selected="false" aria-disabled="false" aria-controls="panel_R_jjqq_3" data-rttab="true">500</li></ul><div class="react-tabs__tab-panel react-tabs__tab-panel--selected" role="tabpanel" id="panel_R_jjqq_0" aria-labelledby="tab_R_jjqq_0"><div><div class="sc-cNSlRw bMFMGt"><span class="sc-bBzIOb BuCyN">Content type</span><div class="sc-dPqFhK kgKexQ">application/json</div></div><div class="sc-hUheUT jUCYlq"><div class="sc-cTZdpT hHzuQA"><div class="sc-giQkEn dzKJV"><button><div class="sc-jcgtOs feYhXE">Copy</div></button></div><div tabindex="0" class="sc-iJSMbW fiNpIH sc-jNDflC jgTAJz"><div class="redoc-json"><code><button class="collapser" aria-label="collapse"></button><span class="token punctuation">{</span><span class="ellipsis"></span><ul class="obj collapsible"><li><div class="hoverable "><span class="property token string">"item_id"</span>: <span class="token string">&quot;item_4021&quot;</span><span class="token punctuation">,</span></div></li><li><div class="hoverable "><span class="property token string">"total_stock"</span>: <span class="token number">100</span><span class="token punctuation">,</span></div></li><li><div class="hoverable "><span class="property token string">"reserved_stock"</span>: <span class="token number">15</span><span class="token punctuation">,</span></div></li><li><div class="hoverable "><span class="property token string">"available_stock"</span>: <span class="token number">85</span></div></li></ul><span class="token punctuation">}</span></code></div></div></div></div></div></div><div class="react-tabs__tab-panel" role="tabpanel" id="panel_R_jjqq_1" aria-labelledby="tab_R_jjqq_1"></div><div class="react-tabs__tab-panel" role="tabpanel" id="panel_R_jjqq_2" aria-labelledby="tab_R_jjqq_2"></div><div class="react-tabs__tab-panel" role="tabpanel" id="panel_R_jjqq_3" aria-labelledby="tab_R_jjqq_3"></div></div></div></div></div></div></div><div class="sc-ekVkVN bjzTxL"></div></div></div>
+      <script>
+      const __redoc_state = {"menu":{"activeItemIdx":-1},"spec":{"data":{"openapi":"3.0.3","info":{"title":"Inventory Reservation API","version":"1.0.0","description":"High-throughput inventory reservation for flash-sale events.\n\nREST API for atomically reserving limited product inventory under high\nconcurrency, confirming reservations, and querying real-time stock.\n\n## Reservation lifecycle\nA successful `reserve` moves quantity from **available** into **reserved**\nfor a **5-minute TTL**. If not confirmed within the TTL, the held quantity is\nautomatically returned to available stock by a background sweeper (and is\nadditionally treated as expired on read).\n\nPhysical inventory (`total_stock`) is decremented only on `confirm`.\n\n## Concurrency guarantees\nReserving is performed with a single atomic conditional `UPDATE` in\nPostgreSQL, so requests never over-sell stock nor drive it negative. A\nconcurrent or repeated `confirm` is idempotent: only the first transition out\nof `ACTIVE` succeeds.\n\n## Error model\nEvery non-2xx response uses a single envelope (`Error`) with a stable,\nmachine-readable `error.code`, a human-readable `error.message`, and optional\nstructured `error.details`.\n\n## Authentication\nAuthentication is out of scope for this service: `user_id` is a trusted,\nclient-supplied identifier. No security scheme is required (see the\nroot-level `security: []`). A production deployment would derive `user_id`\nfrom an authenticated session.\n","contact":{"name":"Inventory Platform Team","email":"platform@example.com"},"license":{"name":"MIT","url":"https://opensource.org/licenses/MIT"}},"servers":[{"url":"http://localhost:8080","description":"Local development (docker compose up)"}],"tags":[{"name":"Inventory","description":"Stock lookup and reservation operations"}],"security":[],"paths":{"/api/v1/inventory/reserve":{"post":{"operationId":"reserveStock","summary":"Reserve stock","description":"Atomically reserve inventory for a user if sufficient available stock\nexists. The reservation expires after 5 minutes unless confirmed.\n","tags":["Inventory"],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/ReserveRequest"},"examples":{"standard":{"summary":"Reserve 2 units","value":{"user_id":"usr_9981","item_id":"item_4021","quantity":2}}}}}},"responses":{"201":{"description":"Reservation created successfully.","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ReserveResponse"},"examples":{"success":{"summary":"Reserved","value":{"status":"success","reservation_id":"res_883291","item_id":"item_4021","quantity":2,"expires_at":"2026-07-20T16:35:00Z"}}}}}},"400":{"$ref":"#/components/responses/BadRequest"},"404":{"description":"The requested item does not exist.","content":{"application/json":{"schema":{"$ref":"#/components/schemas/Error"},"examples":{"itemNotFound":{"summary":"Unknown item","value":{"error":{"code":"ITEM_NOT_FOUND","message":"Item 'item_4021' does not exist.","details":{"item_id":"item_4021"}}}}}}}},"409":{"description":"Insufficient available stock to satisfy the request.","content":{"application/json":{"schema":{"$ref":"#/components/schemas/Error"},"examples":{"insufficientStock":{"summary":"Not enough stock","value":{"error":{"code":"INSUFFICIENT_STOCK","message":"Only 3 units available, requested 5.","details":{"item_id":"item_4021","available":3,"requested":5}}}}}}}},"500":{"$ref":"#/components/responses/InternalError"}}}},"/api/v1/inventory/confirm":{"post":{"operationId":"confirmReservation","summary":"Confirm reservation","description":"Permanently commit an active reservation, completing the order process\nand decrementing physical inventory. Idempotent: only a reservation in\nthe `ACTIVE` state can be confirmed.\n","tags":["Inventory"],"requestBody":{"required":true,"content":{"application/json":{"schema":{"$ref":"#/components/schemas/ConfirmRequest"},"examples":{"standard":{"summary":"Confirm a reservation","value":{"reservation_id":"res_883291"}}}}}},"responses":{"200":{"description":"Reservation confirmed successfully.","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ConfirmResponse"},"examples":{"success":{"summary":"Confirmed","value":{"status":"success","reservation_id":"res_883291","confirmed_at":"2026-07-20T16:32:00Z"}}}}}},"400":{"$ref":"#/components/responses/BadRequest"},"404":{"description":"The reservation does not exist.","content":{"application/json":{"schema":{"$ref":"#/components/schemas/Error"},"examples":{"reservationNotFound":{"summary":"Unknown reservation","value":{"error":{"code":"RESERVATION_NOT_FOUND","message":"Reservation 'res_883291' does not exist.","details":{"reservation_id":"res_883291"}}}}}}}},"409":{"description":"The reservation has already been confirmed.","content":{"application/json":{"schema":{"$ref":"#/components/schemas/Error"},"examples":{"alreadyConfirmed":{"summary":"Already confirmed","value":{"error":{"code":"ALREADY_CONFIRMED","message":"Reservation 'res_883291' has already been confirmed.","details":{"reservation_id":"res_883291"}}}}}}}},"410":{"description":"The reservation has expired and can no longer be confirmed.","content":{"application/json":{"schema":{"$ref":"#/components/schemas/Error"},"examples":{"reservationExpired":{"summary":"Expired reservation","value":{"error":{"code":"RESERVATION_EXPIRED","message":"Reservation 'res_883291' expired at 2026-07-20T16:35:00Z.","details":{"reservation_id":"res_883291","expires_at":"2026-07-20T16:35:00Z"}}}}}}}},"500":{"$ref":"#/components/responses/InternalError"}}}},"/api/v1/inventory/stock":{"get":{"operationId":"getStock","summary":"Check inventory status","description":"Return the real-time stock breakdown for an item. `available_stock` is\nderived as `total_stock - reserved_stock`.\n","tags":["Inventory"],"parameters":[{"name":"item_id","in":"query","required":true,"description":"Unique identifier of the item.","schema":{"type":"string","minLength":1,"example":"item_4021"}}],"responses":{"200":{"description":"Stock breakdown returned.","content":{"application/json":{"schema":{"$ref":"#/components/schemas/StockResponse"},"examples":{"success":{"summary":"Stock snapshot","value":{"item_id":"item_4021","total_stock":100,"reserved_stock":15,"available_stock":85}}}}}},"400":{"$ref":"#/components/responses/BadRequest"},"404":{"description":"The requested item does not exist.","content":{"application/json":{"schema":{"$ref":"#/components/schemas/Error"},"examples":{"itemNotFound":{"summary":"Unknown item","value":{"error":{"code":"ITEM_NOT_FOUND","message":"Item 'item_4021' does not exist.","details":{"item_id":"item_4021"}}}}}}}},"500":{"$ref":"#/components/responses/InternalError"}}}}},"components":{"schemas":{"ReserveRequest":{"type":"object","description":"Payload for creating a stock reservation.","required":["user_id","item_id","quantity"],"additionalProperties":false,"properties":{"user_id":{"type":"string","minLength":1,"description":"Identifier of the user requesting the reservation.","example":"usr_9981"},"item_id":{"type":"string","minLength":1,"description":"Identifier of the item to reserve.","example":"item_4021"},"quantity":{"type":"integer","format":"int32","minimum":1,"description":"Number of units to reserve. Must be at least 1.","example":2}}},"ReserveResponse":{"type":"object","description":"A successfully created reservation.","required":["status","reservation_id","item_id","quantity","expires_at"],"properties":{"status":{"type":"string","enum":["success"],"description":"Discriminator for a successful response.","example":"success"},"reservation_id":{"type":"string","description":"Unique identifier of the created reservation.","example":"res_883291"},"item_id":{"type":"string","example":"item_4021"},"quantity":{"type":"integer","format":"int32","minimum":1,"example":2},"expires_at":{"type":"string","format":"date-time","description":"UTC timestamp at which the reservation expires (created + 5 minutes).","example":"2026-07-20T16:35:00Z"}}},"ConfirmRequest":{"type":"object","description":"Payload for confirming a reservation.","required":["reservation_id"],"additionalProperties":false,"properties":{"reservation_id":{"type":"string","minLength":1,"example":"res_883291"}}},"ConfirmResponse":{"type":"object","description":"A successfully confirmed reservation.","required":["status","reservation_id","confirmed_at"],"properties":{"status":{"type":"string","enum":["success"],"example":"success"},"reservation_id":{"type":"string","example":"res_883291"},"confirmed_at":{"type":"string","format":"date-time","example":"2026-07-20T16:32:00Z"}}},"StockResponse":{"type":"object","description":"Real-time stock breakdown for an item.","required":["item_id","total_stock","reserved_stock","available_stock"],"properties":{"item_id":{"type":"string","example":"item_4021"},"total_stock":{"type":"integer","format":"int32","minimum":0,"description":"Physical, uncommitted inventory pool for the item.","example":100},"reserved_stock":{"type":"integer","format":"int32","minimum":0,"description":"Units currently held by active reservations.","example":15},"available_stock":{"type":"integer","format":"int32","minimum":0,"description":"Derived as total_stock - reserved_stock.","example":85}}},"Error":{"type":"object","description":"Standard error envelope returned by every non-2xx response.","required":["error"],"properties":{"error":{"type":"object","required":["code","message"],"properties":{"code":{"$ref":"#/components/schemas/ErrorCode"},"message":{"type":"string","description":"Human-readable description of the failure.","example":"Only 3 units available, requested 5."},"details":{"type":"object","description":"Optional structured context for the client.","additionalProperties":true}}}}},"ErrorCode":{"type":"string","description":"Stable, machine-readable error identifier.","enum":["INVALID_INPUT","ITEM_NOT_FOUND","INSUFFICIENT_STOCK","RESERVATION_NOT_FOUND","RESERVATION_EXPIRED","ALREADY_CONFIRMED","INTERNAL_ERROR"]}},"responses":{"BadRequest":{"description":"The request payload or parameters failed validation.","content":{"application/json":{"schema":{"$ref":"#/components/schemas/Error"},"examples":{"invalidInput":{"summary":"Invalid input","value":{"error":{"code":"INVALID_INPUT","message":"quantity must be greater than 0.","details":{"field":"quantity"}}}}}}}},"InternalError":{"description":"An unexpected server-side error occurred.","content":{"application/json":{"schema":{"$ref":"#/components/schemas/Error"},"examples":{"internalError":{"summary":"Internal error","value":{"error":{"code":"INTERNAL_ERROR","message":"An unexpected error occurred."}}}}}}}}}}},"searchIndex":{"store":["section/Reservation-lifecycle","section/Concurrency-guarantees","section/Error-model","section/Authentication","tag/Inventory","tag/Inventory/operation/reserveStock","tag/Inventory/operation/confirmReservation","tag/Inventory/operation/getStock"],"index":{"version":"2.3.9","fields":["title","description"],"fieldVectors":[["title/0",[0,0.056,1,1.744]],["description/0",[0,0.066,2,1.389,3,1.389,4,2.054,5,1.468,6,1.389,7,2.054,8,0.564,9,1.389,10,1.389,11,1.389,12,0.993,13,0.252,14,1.389,15,1.389,16,1.389,17,1.389,18,0.993,19,1.389,20,0.993,21,0.382,22,0.993,23,0.993]],["title/1",[24,1.247,25,1.744]],["description/1",[0,0.05,8,0.432,13,0.285,24,1.123,26,1.571,27,1.123,28,1.123,29,1.571,30,1.571,31,1.571,32,1.571,33,1.571,34,1.571,35,1.571,36,1.571,37,1.571,38,1.123,39,1.571,40,1.571,41,1.123,42,1.123,43,1.571]],["title/2",[44,1.247,45,1.744]],["description/2",[27,1.362,44,1.362,46,1.905,47,1.905,48,1.905,49,1.905,50,1.905,51,1.905,52,1.905,53,1.905,54,1.905,55,1.905,56,1.905,57,1.905]],["title/3",[58,1.583]],["description/3",[41,1.148,58,1.632,59,1.606,60,1.606,61,2.282,62,1.606,63,1.606,64,1.606,65,2.282,66,1.606,67,1.606,68,1.606,69,1.606,70,1.148,71,1.606,72,1.606,73,1.148,74,1.606]],["title/4",[21,0.609]],["description/4",[0,0.083,13,0.471,75,2.594,76,2.594]],["title/5",[0,0.056,13,0.317]],["description/5",[0,0.08,5,1.327,8,0.51,13,0.337,18,1.327,21,0.51,28,1.327,77,1.855,78,1.855,79,1.855,80,1.855,81,1.855,82,1.855,83,1.855]],["title/6",[0,0.056,8,0.479]],["description/6",[0,0.079,8,0.497,20,1.293,21,0.497,23,1.293,38,1.293,42,1.773,84,1.809,85,1.809,86,1.809,87,1.809,88,1.809,89,1.809,90,1.809]],["title/7",[21,0.395,91,1.439,92,1.439]],["description/7",[12,1.48,13,0.376,22,1.48,70,1.48,73,1.48,93,2.07,94,2.07,95,2.07,96,2.07,97,2.07,98,2.07]]],"invertedIndex":[["",{"_index":70,"title":{},"description":{"3":{},"7":{}}}],["5",{"_index":80,"title":{},"description":{"5":{}}}],["5-minut",{"_index":6,"title":{},"description":{"0":{}}}],["activ",{"_index":42,"title":{},"description":{"1":{},"6":{}}}],["addition",{"_index":16,"title":{},"description":{"0":{}}}],["api/v1/inventory/confirm",{"_index":90,"title":{},"description":{"6":{}}}],["api/v1/inventory/reserv",{"_index":83,"title":{},"description":{"5":{}}}],["api/v1/inventory/stock",{"_index":98,"title":{},"description":{"7":{}}}],["atom",{"_index":28,"title":{},"description":{"1":{},"5":{}}}],["authent",{"_index":58,"title":{"3":{}},"description":{"3":{}}}],["automat",{"_index":11,"title":{},"description":{"0":{}}}],["avail",{"_index":5,"title":{},"description":{"0":{},"5":{}}}],["available_stock",{"_index":96,"title":{},"description":{"7":{}}}],["background",{"_index":14,"title":{},"description":{"0":{}}}],["breakdown",{"_index":94,"title":{},"description":{"7":{}}}],["check",{"_index":91,"title":{"7":{}},"description":{}}],["client-suppli",{"_index":63,"title":{},"description":{"3":{}}}],["commit",{"_index":85,"title":{},"description":{"6":{}}}],["complet",{"_index":86,"title":{},"description":{"6":{}}}],["concurr",{"_index":24,"title":{"1":{}},"description":{"1":{}}}],["condit",{"_index":29,"title":{},"description":{"1":{}}}],["confirm",{"_index":8,"title":{"6":{}},"description":{"0":{},"1":{},"5":{},"6":{}}}],["decrement",{"_index":23,"title":{},"description":{"0":{},"6":{}}}],["deploy",{"_index":72,"title":{},"description":{"3":{}}}],["deriv",{"_index":73,"title":{},"description":{"3":{},"7":{}}}],["drive",{"_index":35,"title":{},"description":{"1":{}}}],["envelop",{"_index":49,"title":{},"description":{"2":{}}}],["error",{"_index":44,"title":{"2":{}},"description":{"2":{}}}],["error.cod",{"_index":52,"title":{},"description":{"2":{}}}],["error.detail",{"_index":57,"title":{},"description":{"2":{}}}],["error.messag",{"_index":54,"title":{},"description":{"2":{}}}],["exist",{"_index":79,"title":{},"description":{"5":{}}}],["expir",{"_index":18,"title":{},"description":{"0":{},"5":{}}}],["first",{"_index":39,"title":{},"description":{"1":{}}}],["guarante",{"_index":25,"title":{"1":{}},"description":{}}],["held",{"_index":10,"title":{},"description":{"0":{}}}],["human-read",{"_index":53,"title":{},"description":{"2":{}}}],["idempot",{"_index":38,"title":{},"description":{"1":{},"6":{}}}],["identifi",{"_index":64,"title":{},"description":{"3":{}}}],["inventori",{"_index":21,"title":{"4":{},"7":{}},"description":{"0":{},"5":{},"6":{}}}],["item",{"_index":95,"title":{},"description":{"7":{}}}],["lifecycl",{"_index":1,"title":{"0":{}},"description":{}}],["lookup",{"_index":75,"title":{},"description":{"4":{}}}],["machine-read",{"_index":51,"title":{},"description":{"2":{}}}],["minut",{"_index":81,"title":{},"description":{"5":{}}}],["model",{"_index":45,"title":{"2":{}},"description":{}}],["move",{"_index":3,"title":{},"description":{"0":{}}}],["neg",{"_index":36,"title":{},"description":{"1":{}}}],["never",{"_index":33,"title":{},"description":{"1":{}}}],["non-2xx",{"_index":46,"title":{},"description":{"2":{}}}],["oper",{"_index":76,"title":{},"description":{"4":{}}}],["option",{"_index":55,"title":{},"description":{"2":{}}}],["order",{"_index":87,"title":{},"description":{"6":{}}}],["out",{"_index":41,"title":{},"description":{"1":{},"3":{}}}],["over-sel",{"_index":34,"title":{},"description":{"1":{}}}],["perform",{"_index":26,"title":{},"description":{"1":{}}}],["perman",{"_index":84,"title":{},"description":{"6":{}}}],["physic",{"_index":20,"title":{},"description":{"0":{},"6":{}}}],["postgresql",{"_index":31,"title":{},"description":{"1":{}}}],["process",{"_index":88,"title":{},"description":{"6":{}}}],["product",{"_index":71,"title":{},"description":{"3":{}}}],["quantiti",{"_index":4,"title":{},"description":{"0":{}}}],["read",{"_index":19,"title":{},"description":{"0":{}}}],["real-tim",{"_index":93,"title":{},"description":{"7":{}}}],["repeat",{"_index":37,"title":{},"description":{"1":{}}}],["request",{"_index":32,"title":{},"description":{"1":{}}}],["requir",{"_index":67,"title":{},"description":{"3":{}}}],["reserv",{"_index":0,"title":{"0":{},"5":{},"6":{}},"description":{"0":{},"1":{},"4":{},"5":{},"6":{}}}],["reserved_stock",{"_index":97,"title":{},"description":{"7":{}}}],["respons",{"_index":47,"title":{},"description":{"2":{}}}],["return",{"_index":12,"title":{},"description":{"0":{},"7":{}}}],["root-level",{"_index":69,"title":{},"description":{"3":{}}}],["scheme",{"_index":66,"title":{},"description":{"3":{}}}],["scope",{"_index":59,"title":{},"description":{"3":{}}}],["secur",{"_index":65,"title":{},"description":{"3":{}}}],["see",{"_index":68,"title":{},"description":{"3":{}}}],["servic",{"_index":60,"title":{},"description":{"3":{}}}],["session",{"_index":74,"title":{},"description":{"3":{}}}],["singl",{"_index":27,"title":{},"description":{"1":{},"2":{}}}],["stabl",{"_index":50,"title":{},"description":{"2":{}}}],["state",{"_index":89,"title":{},"description":{"6":{}}}],["statu",{"_index":92,"title":{"7":{}},"description":{}}],["stock",{"_index":13,"title":{"5":{}},"description":{"0":{},"1":{},"4":{},"5":{},"7":{}}}],["structur",{"_index":56,"title":{},"description":{"2":{}}}],["succe",{"_index":43,"title":{},"description":{"1":{}}}],["success",{"_index":2,"title":{},"description":{"0":{}}}],["suffici",{"_index":78,"title":{},"description":{"5":{}}}],["sweeper",{"_index":15,"title":{},"description":{"0":{}}}],["total_stock",{"_index":22,"title":{},"description":{"0":{},"7":{}}}],["transit",{"_index":40,"title":{},"description":{"1":{}}}],["treat",{"_index":17,"title":{},"description":{"0":{}}}],["trust",{"_index":62,"title":{},"description":{"3":{}}}],["ttl",{"_index":7,"title":{},"description":{"0":{}}}],["unless",{"_index":82,"title":{},"description":{"5":{}}}],["updat",{"_index":30,"title":{},"description":{"1":{}}}],["us",{"_index":48,"title":{},"description":{"2":{}}}],["user",{"_index":77,"title":{},"description":{"5":{}}}],["user_id",{"_index":61,"title":{},"description":{"3":{}}}],["within",{"_index":9,"title":{},"description":{"0":{}}}]],"pipeline":[]}},"options":{}};
+
+      var container = document.getElementById('redoc');
+      Redoc.hydrate(__redoc_state, container);
+
+      </script>
+</body>
+
+</html>

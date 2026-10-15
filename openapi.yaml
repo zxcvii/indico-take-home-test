@@ -1,0 +1,457 @@
+openapi: 3.0.3
+
+info:
+  title: Inventory Reservation API
+  version: 1.0.0
+  description: |
+    High-throughput inventory reservation for flash-sale events.
+
+    REST API for atomically reserving limited product inventory under high
+    concurrency, confirming reservations, and querying real-time stock.
+
+    ## Reservation lifecycle
+    A successful `reserve` moves quantity from **available** into **reserved**
+    for a **5-minute TTL**. If not confirmed within the TTL, the held quantity is
+    automatically returned to available stock by a background sweeper (and is
+    additionally treated as expired on read).
+
+    Physical inventory (`total_stock`) is decremented only on `confirm`.
+
+    ## Concurrency guarantees
+    Reserving is performed with a single atomic conditional `UPDATE` in
+    PostgreSQL, so requests never over-sell stock nor drive it negative. A
+    concurrent or repeated `confirm` is idempotent: only the first transition out
+    of `ACTIVE` succeeds.
+
+    ## Error model
+    Every non-2xx response uses a single envelope (`Error`) with a stable,
+    machine-readable `error.code`, a human-readable `error.message`, and optional
+    structured `error.details`.
+
+    ## Authentication
+    Authentication is out of scope for this service: `user_id` is a trusted,
+    client-supplied identifier. No security scheme is required (see the
+    root-level `security: []`). A production deployment would derive `user_id`
+    from an authenticated session.
+  contact:
+    name: Inventory Platform Team
+    email: platform@example.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:8080
+    description: Local development (docker compose up)
+
+tags:
+  - name: Inventory
+    description: Stock lookup and reservation operations
+
+security: []
+
+paths:
+  /api/v1/inventory/reserve:
+    post:
+      operationId: reserveStock
+      summary: Reserve stock
+      description: |
+        Atomically reserve inventory for a user if sufficient available stock
+        exists. The reservation expires after 5 minutes unless confirmed.
+      tags:
+        - Inventory
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReserveRequest"
+            examples:
+              standard:
+                summary: Reserve 2 units
+                value:
+                  user_id: usr_9981
+                  item_id: item_4021
+                  quantity: 2
+      responses:
+        "201":
+          description: Reservation created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReserveResponse"
+              examples:
+                success:
+                  summary: Reserved
+                  value:
+                    status: success
+                    reservation_id: res_883291
+                    item_id: item_4021
+                    quantity: 2
+                    expires_at: "2026-07-20T16:35:00Z"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          description: The requested item does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                itemNotFound:
+                  summary: Unknown item
+                  value:
+                    error:
+                      code: ITEM_NOT_FOUND
+                      message: "Item 'item_4021' does not exist."
+                      details:
+                        item_id: item_4021
+        "409":
+          description: Insufficient available stock to satisfy the request.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                insufficientStock:
+                  summary: Not enough stock
+                  value:
+                    error:
+                      code: INSUFFICIENT_STOCK
+                      message: "Only 3 units available, requested 5."
+                      details:
+                        item_id: item_4021
+                        available: 3
+                        requested: 5
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/v1/inventory/confirm:
+    post:
+      operationId: confirmReservation
+      summary: Confirm reservation
+      description: |
+        Permanently commit an active reservation, completing the order process
+        and decrementing physical inventory. Idempotent: only a reservation in
+        the `ACTIVE` state can be confirmed.
+      tags:
+        - Inventory
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConfirmRequest"
+            examples:
+              standard:
+                summary: Confirm a reservation
+                value:
+                  reservation_id: res_883291
+      responses:
+        "200":
+          description: Reservation confirmed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConfirmResponse"
+              examples:
+                success:
+                  summary: Confirmed
+                  value:
+                    status: success
+                    reservation_id: res_883291
+                    confirmed_at: "2026-07-20T16:32:00Z"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          description: The reservation does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                reservationNotFound:
+                  summary: Unknown reservation
+                  value:
+                    error:
+                      code: RESERVATION_NOT_FOUND
+                      message: "Reservation 'res_883291' does not exist."
+                      details:
+                        reservation_id: res_883291
+        "409":
+          description: The reservation has already been confirmed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                alreadyConfirmed:
+                  summary: Already confirmed
+                  value:
+                    error:
+                      code: ALREADY_CONFIRMED
+                      message: "Reservation 'res_883291' has already been confirmed."
+                      details:
+                        reservation_id: res_883291
+        "410":
+          description: The reservation has expired and can no longer be confirmed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                reservationExpired:
+                  summary: Expired reservation
+                  value:
+                    error:
+                      code: RESERVATION_EXPIRED
+                      message: "Reservation 'res_883291' expired at 2026-07-20T16:35:00Z."
+                      details:
+                        reservation_id: res_883291
+                        expires_at: "2026-07-20T16:35:00Z"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/v1/inventory/stock:
+    get:
+      operationId: getStock
+      summary: Check inventory status
+      description: |
+        Return the real-time stock breakdown for an item. `available_stock` is
+        derived as `total_stock - reserved_stock`.
+      tags:
+        - Inventory
+      parameters:
+        - name: item_id
+          in: query
+          required: true
+          description: Unique identifier of the item.
+          schema:
+            type: string
+            minLength: 1
+            example: item_4021
+      responses:
+        "200":
+          description: Stock breakdown returned.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StockResponse"
+              examples:
+                success:
+                  summary: Stock snapshot
+                  value:
+                    item_id: item_4021
+                    total_stock: 100
+                    reserved_stock: 15
+                    available_stock: 85
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          description: The requested item does not exist.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                itemNotFound:
+                  summary: Unknown item
+                  value:
+                    error:
+                      code: ITEM_NOT_FOUND
+                      message: "Item 'item_4021' does not exist."
+                      details:
+                        item_id: item_4021
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+components:
+  schemas:
+    ReserveRequest:
+      type: object
+      description: Payload for creating a stock reservation.
+      required:
+        - user_id
+        - item_id
+        - quantity
+      additionalProperties: false
+      properties:
+        user_id:
+          type: string
+          minLength: 1
+          description: Identifier of the user requesting the reservation.
+          example: usr_9981
+        item_id:
+          type: string
+          minLength: 1
+          description: Identifier of the item to reserve.
+          example: item_4021
+        quantity:
+          type: integer
+          format: int32
+          minimum: 1
+          description: Number of units to reserve. Must be at least 1.
+          example: 2
+
+    ReserveResponse:
+      type: object
+      description: A successfully created reservation.
+      required:
+        - status
+        - reservation_id
+        - item_id
+        - quantity
+        - expires_at
+      properties:
+        status:
+          type: string
+          enum:
+            - success
+          description: Discriminator for a successful response.
+          example: success
+        reservation_id:
+          type: string
+          description: Unique identifier of the created reservation.
+          example: res_883291
+        item_id:
+          type: string
+          example: item_4021
+        quantity:
+          type: integer
+          format: int32
+          minimum: 1
+          example: 2
+        expires_at:
+          type: string
+          format: date-time
+          description: UTC timestamp at which the reservation expires (created + 5 minutes).
+          example: "2026-07-20T16:35:00Z"
+
+    ConfirmRequest:
+      type: object
+      description: Payload for confirming a reservation.
+      required:
+        - reservation_id
+      additionalProperties: false
+      properties:
+        reservation_id:
+          type: string
+          minLength: 1
+          example: res_883291
+
+    ConfirmResponse:
+      type: object
+      description: A successfully confirmed reservation.
+      required:
+        - status
+        - reservation_id
+        - confirmed_at
+      properties:
+        status:
+          type: string
+          enum:
+            - success
+          example: success
+        reservation_id:
+          type: string
+          example: res_883291
+        confirmed_at:
+          type: string
+          format: date-time
+          example: "2026-07-20T16:32:00Z"
+
+    StockResponse:
+      type: object
+      description: Real-time stock breakdown for an item.
+      required:
+        - item_id
+        - total_stock
+        - reserved_stock
+        - available_stock
+      properties:
+        item_id:
+          type: string
+          example: item_4021
+        total_stock:
+          type: integer
+          format: int32
+          minimum: 0
+          description: Physical, uncommitted inventory pool for the item.
+          example: 100
+        reserved_stock:
+          type: integer
+          format: int32
+          minimum: 0
+          description: Units currently held by active reservations.
+          example: 15
+        available_stock:
+          type: integer
+          format: int32
+          minimum: 0
+          description: "Derived as total_stock - reserved_stock."
+          example: 85
+
+    Error:
+      type: object
+      description: Standard error envelope returned by every non-2xx response.
+      required:
+        - error
+      properties:
+        error:
+          type: object
+          required:
+            - code
+            - message
+          properties:
+            code:
+              $ref: "#/components/schemas/ErrorCode"
+            message:
+              type: string
+              description: Human-readable description of the failure.
+              example: "Only 3 units available, requested 5."
+            details:
+              type: object
+              description: Optional structured context for the client.
+              additionalProperties: true
+
+    ErrorCode:
+      type: string
+      description: Stable, machine-readable error identifier.
+      enum:
+        - INVALID_INPUT
+        - ITEM_NOT_FOUND
+        - INSUFFICIENT_STOCK
+        - RESERVATION_NOT_FOUND
+        - RESERVATION_EXPIRED
+        - ALREADY_CONFIRMED
+        - INTERNAL_ERROR
+
+  responses:
+    BadRequest:
+      description: The request payload or parameters failed validation.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          examples:
+            invalidInput:
+              summary: Invalid input
+              value:
+                error:
+                  code: INVALID_INPUT
+                  message: "quantity must be greater than 0."
+                  details:
+                    field: quantity
+    InternalError:
+      description: An unexpected server-side error occurred.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          examples:
+            internalError:
+              summary: Internal error
+              value:
+                error:
+                  code: INTERNAL_ERROR
+                  message: "An unexpected error occurred."
